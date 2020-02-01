@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace World
 {
@@ -16,7 +17,6 @@ namespace World
         public Point vector;
         private Rectangle rect;
         public World World { get; set; }
-        public Bitmap Bitmap { get; set; }
         public Rectangle Screen { get; set; }
         private double Scale
         {
@@ -31,10 +31,9 @@ namespace World
             }
         }
 
-        public Camera(World world, Form1 form, Point location, Size size, Bitmap bitmap, Rectangle screen, int scale)
+        public Camera(World world, Form1 form, Point location, Size size, Rectangle screen, int scale)
         {
             World = world;
-            Bitmap = bitmap;
             Screen = screen;
             vector = new Point(0, 0);
             form.paint += Paint;
@@ -54,24 +53,24 @@ namespace World
 
         }
 
-        public void Paint(Form1 form, EventArgs args)
+        public void Paint(Form1 form, PaintEventArgs args)
         {
-            Bitmap = new Bitmap(Form1.WORK_AREA + 10, Form1.WORK_AREA + 25);
-                queue.ForEach((Cell c) => { c.Paint(this); });
+            queue.ForEach((Cell c) => { c.Paint(this, args.Graphics); });
         }
 
-        public void Paint(int x, int y, int width, int height, Color color)
+        public void Paint(Graphics g, Rectangle r, Color color)
         {
-            for (int i = 0; i < width; i++)
+            r.Offset(-rect.X, -rect.Y);
+            if (Screen.Contains(r))
             {
-                for (int j = 0; j < height; j++)
+                g.FillRectangle(new SolidBrush(color), r);
+            }
+            else
+            {
+                r = Rectangle.Intersect(r, Screen);
+                if (r != null && r.Width != 0 && r.Height != 0)
                 {
-                    int x0 = x - rect.X + i;
-                    int y0 = y - rect.Y + j;
-                    if (Screen.Contains(x0, y0))
-                    {
-                        Bitmap.SetPixel(x0 + 5, y0 + 20, color);
-                    }
+                    g.FillRectangle(new SolidBrush(color), r);
                 }
             }
         }

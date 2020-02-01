@@ -13,14 +13,13 @@ namespace World
 {
     public partial class Form1 : Form
     {
-        public delegate void EventPaint(Form1 f1, EventArgs args);
+        public delegate void EventPaint(Form1 f1, PaintEventArgs args);
         public delegate void EventClosing(Form1 f1, EventArgs args);
 
-        public const int WORK_AREA = 400;
+        public const int WORK_AREA = 500;
         public const int CELL_SIZE = 10;
         private World world;
         private Camera camera;
-        private Bitmap background;
         public event EventPaint paint;
         public event EventClosing closing;
 
@@ -42,18 +41,14 @@ namespace World
 
         private void init()
         {
-            Size size = new Size(WORK_AREA + 10, WORK_AREA + 25);
-            background = new Bitmap(size.Width, size.Height);
-            Map.Size = size;
-            Map.BackgroundImage = background;
-            
-            Settings_map.Location = new Point(size.Width + 18, 12);
-            this.Size = new Size(Map.Width + Settings_map.Width + 46, Map.Height + 63);
+            Settings_map.Location = new Point(WORK_AREA + 18, 12);
+            this.DoubleBuffered = true;
+            this.Size = new Size(WORK_AREA + Settings_map.Width + 46, WORK_AREA + 63);
             CenterToScreen();
-            progressBar1.Location = new Point((size.Width - progressBar1.Size.Width) / 2, (size.Height - progressBar1.Size.Height) / 2);
+            progressBar1.Location = new Point((WORK_AREA - progressBar1.Size.Width) / 2, (WORK_AREA - progressBar1.Size.Height) / 2);
             world = new World(this, new Size(WORK_AREA / CELL_SIZE, WORK_AREA / CELL_SIZE));
             world.Generate();
-            camera = new Camera(world, this, new Point(0, 0), Map.Size, background, new Rectangle(0, 0, WORK_AREA, WORK_AREA), 1);
+            camera = new Camera(world, this, new Point(0, 0), new Size(WORK_AREA, WORK_AREA), new Rectangle(0, 0, WORK_AREA, WORK_AREA), 1);
         }
 
         private void draw_grid(Graphics g, Pen pen, int w, int h, int indent)
@@ -90,7 +85,6 @@ namespace World
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Map.BackgroundImage = null;
             progressBar1.Visible = true;
             progressBar1.Enabled = true;
             new Thread(() =>
@@ -98,8 +92,6 @@ namespace World
                 world.Generate();
                 progressBar1.Visible = false;
                 progressBar1.Enabled = false;
-                Map.BackgroundImage = background;
-                label1.Text = "";
             }).Start();
         }
 
@@ -150,13 +142,13 @@ namespace World
 
         private void Map_BackgroundImageChanged(object sender, EventArgs e)
         {
-            Map.Invalidate();
+            //Map.Invalidate();
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
             camera.Update();
-            Map.BackgroundImage = camera.Bitmap;
+            Invalidate();
         }
     }
 }

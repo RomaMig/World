@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using System.Windows.Forms;
 
 namespace World
 {
@@ -37,14 +38,14 @@ namespace World
             Entities = new List<IEntity>();
         }
 
-        public void Paint(Camera cam)
+        public void Paint(Camera cam, Graphics g)
         {
             for (int i = 0; i < Size.Width; i++)
             {
                 for (int j = 0; j < Size.Height; j++)
                 {
                     int c = (int)Math.Round(heights[i, j]);
-                    cam.Paint(Location.X + i, Location.Y + j, 1, 1, Color.FromArgb(c, c, c));
+                    cam.Paint(g, new Rectangle(Location.X + i, Location.Y + j, 1, 1), Color.FromArgb(c, c, c));
                 }
             }
         }

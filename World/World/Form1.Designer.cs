@@ -79,6 +79,7 @@
             this.Map.TabIndex = 2;
             this.Map.TabStop = false;
             this.Map.Text = "Карта";
+            this.Map.Visible = false;
             this.Map.BackgroundImageChanged += new System.EventHandler(this.Map_BackgroundImageChanged);
             // 
             // progressBar1
