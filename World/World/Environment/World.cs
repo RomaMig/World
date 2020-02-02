@@ -12,6 +12,7 @@ namespace World
     {
         private double[,] heights;
         public List<IEntity> Entities { get; set; }
+        public List<Point> Changed { get; set; }
         public Point Location { get; set; }
         public Size Size { get; set; }
         public Rectangle Rect { get; }
@@ -23,7 +24,7 @@ namespace World
             }
             set
             {
-                //if (value < 0 || value > 255) value = 0;
+                if (value < 0 || value > 255) value = 0;
                 heights[i, j] = value;
             }
         }
@@ -36,18 +37,29 @@ namespace World
             Rect = new Rectangle(Location, Size);
             heights = new double[Size.Width, Size.Height];
             Entities = new List<IEntity>();
+            Changed = new List<Point>();
         }
 
-        public void Paint(Camera cam, Graphics g)
+        public void Paint(Bitmap bitmap)
         {
             for (int i = 0; i < Size.Width; i++)
             {
                 for (int j = 0; j < Size.Height; j++)
                 {
                     int c = (int)Math.Round(heights[i, j]);
-                    cam.Paint(g, new Rectangle(Location.X + i, Location.Y + j, 1, 1), Color.FromArgb(c, c, c));
+                    bitmap.SetPixel(Location.X + i, Location.Y + j, Color.FromArgb(c, c, c));
                 }
             }
+        }
+
+        public void Repaint(Bitmap bitmap)
+        {
+            Changed.ForEach((Point p) =>
+            {
+                int c = (int)Math.Round(heights[p.X, p.Y]);
+                bitmap.SetPixel(Location.X + p.X, Location.Y + p.Y, Color.FromArgb(c, c, c));
+            });
+            Changed.Clear();
         }
 
         public void Close(Form1 form, EventArgs args)
@@ -70,19 +82,27 @@ namespace World
             int h = size.Height;
             cells = new Cell[w, h];
         }
-        public void Generate()
+
+        public void Generate(ProgressBar progress)
         {
             int w = Size.Width;
             int h = Size.Height;
             Size sizeCell = new Size(Form1.CELL_SIZE, Form1.CELL_SIZE);
+            progress.Value = 10;
+            Map m1 = Map.createDiamondSquare(w, h, 0.01);
+            progress.Value = 55;
+            Map m2 = Map.createNoise(w, h, (double)((int)(100000f / Form1.CELL_SIZE)) / 100000, 5, 6);
+            progress.Value = 95;
             Map heights = Map.createUnion((int i, int j, Map[] m) => 
                 { 
                     return (m[0][i, j] + m[1][i, j] * (1 + m[0][i, j])) * 2;
                 }, 
-                Map.createDiamondSquare(w, h, 0.01), 
-                Map.createNoise(w, h, (double)((int)(100000f / Form1.CELL_SIZE)) / 100000, 5, 6));
+                m1, 
+                m2);
+            progress.Value = 97;
             heights.postprocessing();
             heights.normalizeWithExtention(0, 255, 0.98);
+            progress.Value = 98;
             for (int i = 0; i < w; i++)
             {
                 for (int j = 0; j < h; j++)
@@ -98,6 +118,7 @@ namespace World
                     }
                 }
             }
+            progress.Value = 99;
         }
     }
 }

@@ -30,14 +30,14 @@
         {
             this.components = new System.ComponentModel.Container();
             this.UpdateMap = new System.Windows.Forms.Button();
-            this.Settings_map = new System.Windows.Forms.GroupBox();
+            this.settings_map = new System.Windows.Forms.GroupBox();
             this.button2 = new System.Windows.Forms.Button();
-            this.Map = new System.Windows.Forms.GroupBox();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
-            this.label1 = new System.Windows.Forms.Label();
             this.loop = new System.Windows.Forms.Timer(this.components);
-            this.Settings_map.SuspendLayout();
-            this.Map.SuspendLayout();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.control_panel = new System.Windows.Forms.GroupBox();
+            this.check_grid = new System.Windows.Forms.CheckBox();
+            this.settings_map.SuspendLayout();
+            this.control_panel.SuspendLayout();
             this.SuspendLayout();
             // 
             // UpdateMap
@@ -48,18 +48,19 @@
             this.UpdateMap.TabIndex = 0;
             this.UpdateMap.Text = "Обновить";
             this.UpdateMap.UseVisualStyleBackColor = true;
-            this.UpdateMap.Click += new System.EventHandler(this.button1_Click);
+            this.UpdateMap.Click += new System.EventHandler(this.Update_Map);
             // 
-            // Settings_map
+            // settings_map
             // 
-            this.Settings_map.Controls.Add(this.button2);
-            this.Settings_map.Controls.Add(this.UpdateMap);
-            this.Settings_map.Location = new System.Drawing.Point(628, 12);
-            this.Settings_map.Name = "Settings_map";
-            this.Settings_map.Size = new System.Drawing.Size(220, 100);
-            this.Settings_map.TabIndex = 1;
-            this.Settings_map.TabStop = false;
-            this.Settings_map.Text = "Настройки карты";
+            this.settings_map.Controls.Add(this.check_grid);
+            this.settings_map.Controls.Add(this.button2);
+            this.settings_map.Controls.Add(this.UpdateMap);
+            this.settings_map.Location = new System.Drawing.Point(12, 19);
+            this.settings_map.Name = "settings_map";
+            this.settings_map.Size = new System.Drawing.Size(220, 100);
+            this.settings_map.TabIndex = 1;
+            this.settings_map.TabStop = false;
+            this.settings_map.Text = "Настройки карты";
             // 
             // button2
             // 
@@ -67,53 +68,52 @@
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(95, 23);
             this.button2.TabIndex = 1;
-            this.button2.Text = "Обновить";
+            this.button2.Text = "Кнопка";
             this.button2.UseVisualStyleBackColor = true;
-            // 
-            // Map
-            // 
-            this.Map.Controls.Add(this.progressBar1);
-            this.Map.Location = new System.Drawing.Point(12, 12);
-            this.Map.Name = "Map";
-            this.Map.Size = new System.Drawing.Size(610, 625);
-            this.Map.TabIndex = 2;
-            this.Map.TabStop = false;
-            this.Map.Text = "Карта";
-            this.Map.Visible = false;
-            this.Map.BackgroundImageChanged += new System.EventHandler(this.Map_BackgroundImageChanged);
-            // 
-            // progressBar1
-            // 
-            this.progressBar1.Enabled = false;
-            this.progressBar1.Location = new System.Drawing.Point(205, 301);
-            this.progressBar1.MarqueeAnimationSpeed = 80;
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(200, 23);
-            this.progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
-            this.progressBar1.TabIndex = 0;
-            this.progressBar1.Visible = false;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(628, 119);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(0, 13);
-            this.label1.TabIndex = 3;
             // 
             // loop
             // 
             this.loop.Interval = 15;
             this.loop.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(242, 267);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(100, 23);
+            this.progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.progressBar1.TabIndex = 2;
+            // 
+            // control_panel
+            // 
+            this.control_panel.Controls.Add(this.settings_map);
+            this.control_panel.Dock = System.Windows.Forms.DockStyle.Right;
+            this.control_panel.Location = new System.Drawing.Point(616, 0);
+            this.control_panel.Name = "control_panel";
+            this.control_panel.Size = new System.Drawing.Size(244, 649);
+            this.control_panel.TabIndex = 3;
+            this.control_panel.TabStop = false;
+            this.control_panel.Text = "Панель управления";
+            // 
+            // check_grid
+            // 
+            this.check_grid.AutoSize = true;
+            this.check_grid.Location = new System.Drawing.Point(12, 49);
+            this.check_grid.Name = "check_grid";
+            this.check_grid.Size = new System.Drawing.Size(56, 17);
+            this.check_grid.TabIndex = 2;
+            this.check_grid.Text = "Сетка";
+            this.check_grid.UseVisualStyleBackColor = true;
+            this.check_grid.CheckedChanged += new System.EventHandler(this.check_grid_CheckedChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(860, 649);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.Map);
-            this.Controls.Add(this.Settings_map);
+            this.Controls.Add(this.control_panel);
+            this.Controls.Add(this.progressBar1);
+            this.DoubleBuffered = true;
             this.KeyPreview = true;
             this.Name = "Form1";
             this.Text = "Form1";
@@ -122,22 +122,22 @@
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Form1_KeyPress);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyUp);
-            this.Settings_map.ResumeLayout(false);
-            this.Map.ResumeLayout(false);
+            this.settings_map.ResumeLayout(false);
+            this.settings_map.PerformLayout();
+            this.control_panel.ResumeLayout(false);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
 
         private System.Windows.Forms.Button UpdateMap;
-        private System.Windows.Forms.GroupBox Settings_map;
+        private System.Windows.Forms.GroupBox settings_map;
         private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.GroupBox Map;
-        private System.Windows.Forms.ProgressBar progressBar1;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Timer loop;
+        private System.Windows.Forms.GroupBox control_panel;
+        public System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.CheckBox check_grid;
     }
 }
 

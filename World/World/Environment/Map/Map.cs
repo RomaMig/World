@@ -18,11 +18,15 @@ namespace World
         {
             get
             {
-                return map[i, j];
+                if (i >= 0 && j >= 0 && i < Width && j < Height)
+                    return map[i, j];
+                else
+                    return 0;
             }
             set
             {
-                map[i, j] = value;
+                if (i >= 0 && j >= 0 && i < Width && j < Height)
+                    map[i, j] = value;
             }
         }
 
