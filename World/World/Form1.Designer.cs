@@ -36,12 +36,12 @@
             this.move = new System.Windows.Forms.Timer(this.components);
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.control_panel = new System.Windows.Forms.GroupBox();
-            this.mini_map_group = new System.Windows.Forms.GroupBox();
+            this.mini_map_title = new System.Windows.Forms.GroupBox();
             this.mini_map = new System.Windows.Forms.Panel();
             this.zoom = new System.Windows.Forms.Timer(this.components);
             this.settings_map.SuspendLayout();
             this.control_panel.SuspendLayout();
-            this.mini_map_group.SuspendLayout();
+            this.mini_map_title.SuspendLayout();
             this.SuspendLayout();
             // 
             // UpdateMap
@@ -101,7 +101,7 @@
             // 
             // control_panel
             // 
-            this.control_panel.Controls.Add(this.mini_map_group);
+            this.control_panel.Controls.Add(this.mini_map_title);
             this.control_panel.Controls.Add(this.settings_map);
             this.control_panel.Dock = System.Windows.Forms.DockStyle.Right;
             this.control_panel.Location = new System.Drawing.Point(616, 0);
@@ -111,15 +111,15 @@
             this.control_panel.TabStop = false;
             this.control_panel.Text = "Панель управления";
             // 
-            // mini_map_group
+            // mini_map_title
             // 
-            this.mini_map_group.Controls.Add(this.mini_map);
-            this.mini_map_group.Location = new System.Drawing.Point(12, 19);
-            this.mini_map_group.Name = "mini_map_group";
-            this.mini_map_group.Size = new System.Drawing.Size(220, 220);
-            this.mini_map_group.TabIndex = 2;
-            this.mini_map_group.TabStop = false;
-            this.mini_map_group.Text = "Мини карта";
+            this.mini_map_title.Controls.Add(this.mini_map);
+            this.mini_map_title.Location = new System.Drawing.Point(12, 19);
+            this.mini_map_title.Name = "mini_map_title";
+            this.mini_map_title.Size = new System.Drawing.Size(220, 220);
+            this.mini_map_title.TabIndex = 2;
+            this.mini_map_title.TabStop = false;
+            this.mini_map_title.Text = "Мини карта";
             // 
             // mini_map
             // 
@@ -152,7 +152,7 @@
             this.settings_map.ResumeLayout(false);
             this.settings_map.PerformLayout();
             this.control_panel.ResumeLayout(false);
-            this.mini_map_group.ResumeLayout(false);
+            this.mini_map_title.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -167,7 +167,7 @@
         public System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.CheckBox check_grid;
         private System.Windows.Forms.Timer zoom;
-        private System.Windows.Forms.GroupBox mini_map_group;
+        private System.Windows.Forms.GroupBox mini_map_title;
         private System.Windows.Forms.Panel mini_map;
     }
 }

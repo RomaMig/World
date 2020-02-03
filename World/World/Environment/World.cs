@@ -46,7 +46,7 @@ namespace World
                 m2);
             progress.Value = 96;
             heights.postprocessing();
-            heights.normalizeWithExtention(0, 255, 0.98);
+            heights.normalizeWithExtention(-1, 1, 0.98);
             progress.Value = 97;
             for (int i = 0; i < w; i++)
             {
@@ -119,8 +119,7 @@ namespace World
                 set
                 {
                     height = value;
-                    int c = (int)height;
-                    color = Color.FromArgb(c, c, c);
+                    color = getColor(height);
                     if (changed != null)
                         changed(this, null);
                 }
@@ -137,6 +136,11 @@ namespace World
             public void Paint(Bitmap bitmap)
             {
                 bitmap.SetPixel(Location.X, Location.Y, color);
+            }
+
+            private Color getColor(double a)
+            {
+                return Color.FromArgb(0, 0, 0);
             }
         }
     }

@@ -18,6 +18,7 @@ namespace World
         private World world;
         private DinamicCamera dinamincCamera;
         private Camera miniCamera;
+        private Bitmap loadScreen;
         private Grid grid;
 
         public Form1()
@@ -43,6 +44,7 @@ namespace World
             CenterToScreen();
             progressBar1.Size = new Size(WORK_AREA / 4, 23);
             progressBar1.Location = new Point((WORK_AREA - progressBar1.Size.Width) / 2, (WORK_AREA - progressBar1.Size.Height) / 2);
+            loadScreen = new Bitmap(1, 1);
         }
 
         private void AddHeights()
@@ -73,6 +75,8 @@ namespace World
             KeyPreview = false;
             move.Enabled = false;
             progressBar1.Value = 1;
+            dinamincCamera.Clear(this, loadScreen);
+            miniCamera.Clear(mini_map, loadScreen);
             progressBar1.Value = 2;
             new Thread(() =>
             {

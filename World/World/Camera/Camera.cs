@@ -63,6 +63,15 @@ namespace World
             }
         }
 
+        public void Clear(Control control, Bitmap loadScreen)
+        {
+            queue.ForEach((IPaintable p) => { p.changed -= OnChanged; });
+            queue.Clear();
+
+            //img = loadScreen;
+            control.Invalidate();
+        }
+
         private void UpdatePaint(params IPaintable[] p)
         {
             for (int i = 0; i < p.Length; i++)
