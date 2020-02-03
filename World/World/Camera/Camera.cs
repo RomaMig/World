@@ -9,234 +9,117 @@ using System.Windows.Forms;
 
 namespace World
 {
-    class Camera
+    abstract class Camera
     {
-        public double scale;
-        private Point vector;
-        private Rectangle rectangle;
+        protected Rectangle original;
         private Image img;
-        private List<Cell> queue;
-        private bool isGrid;
-        public World World { get; set; }
+        private CameraState state;
+        private List<IPaintable> queue;
         public Bitmap Bitmap { get; set; }
         public Rectangle Screen { get; set; }
-        public int Velocity { get; set; }
-        public bool GridPaint
-        {
-            set
-            {
-                isGrid = value;
-                FullRepaint();
-            }
-        }
-        public int VectorX
+
+        public CameraState State
         {
             get
             {
-                return vector.X;
-            }
-            set
-            {
-                vector.X = value * Velocity;
-            }
-        }
-        public int VectorY
-        {
-            get
-            {
-                return vector.Y;
-            }
-            set
-            {
-                vector.Y = value * Velocity;
+                return state;
             }
         }
 
-        public Camera(World world, Form1 form, Rectangle screen)
+        public enum CameraState
         {
-            World = world;
+            TO_IMAGE,
+            TO_SCREEN
+        }
+
+        /*
+         * Создание камеры(контекст, оригинальный прямоугольник, экран)
+         * Add - добавление элементов на отрисовку
+         * Resize для получения картинки и последующей перерисовки
+        */
+        public Camera(Control control, Rectangle original, Rectangle screen, CameraState state)
+        {
+            control.Paint += Paint;
+            this.original = original;
             Screen = screen;
-            Velocity = 2;
-            scale = 1;
-            vector = new Point(0, 0);
-            form.paint += Paint;
-            form.closing += Close;
-            Init();
-        }
-
-        private void Init()
-        {
-            vector.X = 0;
-            vector.Y = 0;
-            rectangle = new Rectangle(vector, Screen.Size);
-            scale = 1;
-            Bitmap = new Bitmap(Screen.Width, Screen.Height);
-            queue = new List<Cell>();
+            Bitmap = new Bitmap(original.Width, original.Height);
+            queue = new List<IPaintable>();
             img = Bitmap;
+            this.state = state;
         }
 
-        public void Reset()
+        public void Add(params IPaintable[] p)
         {
-            Init();
-            changeQueue();
-            queue.ForEach((Cell c) => { c.Paint(Bitmap); });
-            if (isGrid) DrawGrid();
-            img = Bitmap;
+            queue.AddRange(p);
+            UpdatePaint(p);
         }
 
-        public void collapse()
+        public void Remove(params IPaintable[] p)
         {
-            rectangle.Width = 0;
-            rectangle.Height = 0;
-            vector.X = 0;
-            vector.Y = 0;
-        }
-
-        public void Update()
-        {
-            if (vector.X != 0 || vector.Y != 0)
+            for (int i = 0; i < p.Length; i++)
             {
-                move();
+                queue.Remove(p[i]);
+                p[i].changed -= OnChanged;
             }
         }
 
-        private void FullRepaint()
+        private void UpdatePaint(params IPaintable[] p)
         {
-            if (rectangle.Width != 0 && rectangle.Height != 0)
+            for (int i = 0; i < p.Length; i++)
             {
-                queue.ForEach((Cell c) => { c.Paint(Bitmap); });
-                if (isGrid) DrawGrid();
-                img = new Bitmap(Bitmap, rectangle.Width, rectangle.Height);
+                p[i].Paint(Bitmap);
+                p[i].changed += OnChanged;
             }
         }
 
-        private void Repaint()
+        private void OnChanged(object sender, EventArgs e)
         {
-            if (rectangle.Width != 0 && rectangle.Height != 0)
+            IPaintable p = (IPaintable)sender;
+            p.Paint(Bitmap);
+        }
+
+        public void Repaint()
+        {
+            queue.ForEach((IPaintable p) => { p.Paint(Bitmap); });
+        }
+
+        public void Resize(Control control)
+        {
+            Rectangle rect = new Rectangle();
+            switch (state)
             {
-                img = new Bitmap(Bitmap, rectangle.Width, rectangle.Height);
+                case CameraState.TO_IMAGE: rect = original; break;
+                case CameraState.TO_SCREEN: rect = Screen; break;
             }
-        }
-
-        public void Paint(Form1 form, PaintEventArgs args)
-        {
-            bool flag = false;
-            Cell cell;
-            while ((cell = queue.Find((Cell c) => { return c.Changed.Count > 0; })) != null)
+            if (rect.Width != 0 && rect.Height != 0)
             {
-                flag = true;
-                cell.Repaint(Bitmap);
-            }
-            if (flag) Repaint();
-            args.Graphics.DrawImageUnscaled(img, rectangle);
-        }
-
-        public void Close(Form1 form, EventArgs args)
-        {
-
-        }
-
-        public void zoom(Object sender, MouseEventArgs e)
-        {
-            Form1 form = (Form1)sender;
-            if (!form.progressBar1.Visible && Screen.Contains(e.Location))
-            {
-                int bSize = rectangle.Width;
-                scale += e.Delta / 1000f;
-                if (scale < 1) scale = 1;
-                if (scale > 4) scale = 4;
-                vector.X = Math.Sign(vector.X) * (int)scale;
-                vector.Y = Math.Sign(vector.Y) * (int)scale;
-                int n = (int)(Screen.Width * scale);
-                bSize = n - bSize;
-                rectangle.Size = new Size(n, n);
-                PointF p = e.Location;
-                double propX = p.X / Screen.Size.Width;
-                double propY = p.Y / Screen.Size.Height;
-                rectangle.Offset((int)(-bSize * propX), (int)(-bSize * propY));
-                if (Rectangle.Intersect(Screen, rectangle).Size != Screen.Size)
+                if (Bitmap.Size != rect.Size)
                 {
-                    if (rectangle.Left > Screen.Left) rectangle.X = 0;
-                    if (rectangle.Top > Screen.Top) rectangle.Y = 0;
-                    if (rectangle.Right < Screen.Right) rectangle.X = Screen.Right - rectangle.Width;
-                    if (rectangle.Bottom < Screen.Bottom) rectangle.Y = Screen.Bottom - rectangle.Height;
+                    img = new Bitmap(Bitmap, rect.Width, rect.Height);
                 }
-                changeQueue();
-                Repaint();
-                form.Invalidate();
-            }
-        }
-
-        public void move()
-        {
-            move(vector);
-        }
-
-        public void move(Point vector)
-        {
-            move(vector.X, vector.Y);
-        }
-
-        public void move(int offsetX, int offsetY)
-        {
-            rectangle.Offset(offsetX, offsetY);
-            if (Rectangle.Intersect(Screen, rectangle).Size != Screen.Size)
-            {
-                if (rectangle.Left > Screen.Left) rectangle.X = 0;
-                if (rectangle.Top > Screen.Top) rectangle.Y = 0;
-                if (rectangle.Right < Screen.Right) rectangle.X = Screen.Right - rectangle.Width;
-                if (rectangle.Bottom < Screen.Bottom) rectangle.Y = Screen.Bottom - rectangle.Height;
-            }
-            changeQueue();
-        }
-
-        private void changeQueue()
-        {
-            bool flag = queue.Count == 0;
-            Cell cell;
-            while ((cell = queue.Find((Cell c) => { return Rectangle.Intersect(rectangle, c.Rect).IsEmpty; })) != null)
-            {
-                flag = true;
-                queue.Remove(cell);
-            }
-            if (flag)
-            {
-                for (int i = 0; i < World.Size.Width; i++)
+                else
                 {
-                    for (int j = 0; j < World.Size.Height; j++)
-                    {
-                        if (!queue.Contains(World.cells[i, j]) && rectangle.Contains(World.cells[i, j].Rect))
-                            queue.Add(World.cells[i, j]);
-                    }
+                    img = Bitmap;
                 }
             }
+            control.Invalidate();
         }
 
-        private void DrawGrid()
+        private void Paint(object sender, PaintEventArgs args)
         {
-            draw_grid(Form1.WORK_AREA, Form1.WORK_AREA, Form1.CELL_SIZE, Color.LightGray);
-            draw_grid(Form1.WORK_AREA, Form1.WORK_AREA, Form1.CELL_SIZE * 10, Color.Gray);
+            args.Graphics.DrawImageUnscaled(img, original);
         }
-
-        private void draw_grid(int w, int h, int indent, Color color)
+        
+        public void newState(Control control, CameraState state)
         {
-            int wid = w / indent;
-            int hei = h / indent;
-            for (int i = 0; i < wid; i++)
-            {
-                for (int j = 0; j < w; j++)
-                {
-                    Bitmap.SetPixel(j, i * indent, color);
-                }
-            }
-            for (int i = 0; i < hei; i++)
-            {
-                for (int j = 0; j < h; j++)
-                {
-                    Bitmap.SetPixel(i * indent, j, color);
-                }
-            }
+            this.state = state;
+            Resize(control);
         }
 
+        public virtual void collapse()
+        {
+            original.Width = 0;
+            original.Height = 0;
+        }
     }
 }

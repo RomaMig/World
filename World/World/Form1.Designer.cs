@@ -31,11 +31,12 @@
             this.components = new System.ComponentModel.Container();
             this.UpdateMap = new System.Windows.Forms.Button();
             this.settings_map = new System.Windows.Forms.GroupBox();
+            this.check_grid = new System.Windows.Forms.CheckBox();
             this.button2 = new System.Windows.Forms.Button();
-            this.loop = new System.Windows.Forms.Timer(this.components);
+            this.move = new System.Windows.Forms.Timer(this.components);
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.control_panel = new System.Windows.Forms.GroupBox();
-            this.check_grid = new System.Windows.Forms.CheckBox();
+            this.zoom = new System.Windows.Forms.Timer(this.components);
             this.settings_map.SuspendLayout();
             this.control_panel.SuspendLayout();
             this.SuspendLayout();
@@ -62,6 +63,17 @@
             this.settings_map.TabStop = false;
             this.settings_map.Text = "Настройки карты";
             // 
+            // check_grid
+            // 
+            this.check_grid.AutoSize = true;
+            this.check_grid.Location = new System.Drawing.Point(12, 49);
+            this.check_grid.Name = "check_grid";
+            this.check_grid.Size = new System.Drawing.Size(56, 17);
+            this.check_grid.TabIndex = 2;
+            this.check_grid.Text = "Сетка";
+            this.check_grid.UseVisualStyleBackColor = true;
+            this.check_grid.CheckedChanged += new System.EventHandler(this.check_grid_CheckedChanged);
+            // 
             // button2
             // 
             this.button2.Location = new System.Drawing.Point(115, 19);
@@ -71,10 +83,10 @@
             this.button2.Text = "Кнопка";
             this.button2.UseVisualStyleBackColor = true;
             // 
-            // loop
+            // move
             // 
-            this.loop.Interval = 15;
-            this.loop.Tick += new System.EventHandler(this.timer1_Tick);
+            this.move.Interval = 15;
+            this.move.Tick += new System.EventHandler(this.move_Tick);
             // 
             // progressBar1
             // 
@@ -95,16 +107,10 @@
             this.control_panel.TabStop = false;
             this.control_panel.Text = "Панель управления";
             // 
-            // check_grid
+            // zoom
             // 
-            this.check_grid.AutoSize = true;
-            this.check_grid.Location = new System.Drawing.Point(12, 49);
-            this.check_grid.Name = "check_grid";
-            this.check_grid.Size = new System.Drawing.Size(56, 17);
-            this.check_grid.TabIndex = 2;
-            this.check_grid.Text = "Сетка";
-            this.check_grid.UseVisualStyleBackColor = true;
-            this.check_grid.CheckedChanged += new System.EventHandler(this.check_grid_CheckedChanged);
+            this.zoom.Interval = 15;
+            this.zoom.Tick += new System.EventHandler(this.zoom_Tick);
             // 
             // Form1
             // 
@@ -134,10 +140,11 @@
         private System.Windows.Forms.Button UpdateMap;
         private System.Windows.Forms.GroupBox settings_map;
         private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Timer loop;
+        private System.Windows.Forms.Timer move;
         private System.Windows.Forms.GroupBox control_panel;
         public System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.CheckBox check_grid;
+        private System.Windows.Forms.Timer zoom;
     }
 }
 
