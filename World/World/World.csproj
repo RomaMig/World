@@ -46,7 +46,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Camera.cs" />
+    <Compile Include="Camera\Camera.cs" />
+    <Compile Include="Camera\DinamicCamera.cs" />
+    <Compile Include="Camera\IPaintable.cs" />
     <Compile Include="Environment\Map\DiamondSquare.cs" />
     <Compile Include="Entity\Entity.cs" />
     <Compile Include="Environment\Map\Union.cs" />
