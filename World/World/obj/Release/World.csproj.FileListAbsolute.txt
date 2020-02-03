@@ -1,0 +1,9 @@
+C:\Users\Роман\source\repos\World\World\bin\Release\World.exe.config
+C:\Users\Роман\source\repos\World\World\bin\Release\World.exe
+C:\Users\Роман\source\repos\World\World\bin\Release\World.pdb
+C:\Users\Роман\source\repos\World\World\obj\Release\World.csprojAssemblyReference.cache
+C:\Users\Роман\source\repos\World\World\obj\Release\World.Form1.resources
+C:\Users\Роман\source\repos\World\World\obj\Release\World.Properties.Resources.resources
+C:\Users\Роман\source\repos\World\World\obj\Release\World.csproj.GenerateResource.cache
+C:\Users\Роман\source\repos\World\World\obj\Release\World.exe
+C:\Users\Роман\source\repos\World\World\obj\Release\World.pdb

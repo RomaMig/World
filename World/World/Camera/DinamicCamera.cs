@@ -37,18 +37,11 @@ namespace World
             }
         }
 
-        public DinamicCamera(Form1 form, Rectangle original, Rectangle screen, int velocity) : base(form, original, screen, CameraState.TO_IMAGE)
+        public DinamicCamera(Control control, Rectangle original, Rectangle screen, int velocity) : base(control, original, screen, CameraState.TO_IMAGE)
         {
             Velocity = velocity;
             vector = new Point(0, 0);
             scale = 1;
-        }
-
-        public override void collapse()
-        {
-            base.collapse();
-            vector.X = 0;
-            vector.Y = 0;
         }
 
         public void Update()
@@ -58,8 +51,8 @@ namespace World
 
         public void zoom(Object sender, MouseEventArgs e)
         {
-            Form1 form = (Form1)sender;
-            if (!form.progressBar1.Visible && Screen.Contains(e.Location))
+            Control control = (Control)sender;
+            if (queue.Count != 0 && Screen.Contains(e.Location) && State != CameraState.TO_SCREEN)
             {
                 int bSize = original.Width;
                 scale += e.Delta / 1000f;
@@ -74,7 +67,7 @@ namespace World
                 double propX = p.X / Screen.Size.Width;
                 double propY = p.Y / Screen.Size.Height;
                 move((int)(-bSize * propX), (int)(-bSize * propY));
-                Resize(form);
+                Resize(control);
             }
         }
 
@@ -99,54 +92,14 @@ namespace World
                 if (original.Bottom < Screen.Bottom) original.Y = Screen.Bottom - original.Height;
             }
         }
-        /*
-        private void changeQueue()
-        {
-            bool flag = queue.Count == 0;
-            Cell cell;
-            while ((cell = queue.Find((Cell c) => { return Rectangle.Intersect(original, c.Rect).IsEmpty; })) != null)
-            {
-                flag = true;
-                queue.Remove(cell);
-            }
-            if (flag)
-            {
-                for (int i = 0; i < World.Size.Width; i++)
-                {
-                    for (int j = 0; j < World.Size.Height; j++)
-                    {
-                        if (!queue.Contains(World.cells[i, j]) && original.Contains(World.cells[i, j].Rect))
-                            queue.Add(World.cells[i, j]);
-                    }
-                }
-            }
-        }
 
-        private void DrawGrid()
+        public override void newState(Control control, CameraState state)
         {
-            draw_grid(Form1.WORK_AREA, Form1.WORK_AREA, Form1.CELL_SIZE, Color.LightGray);
-            draw_grid(Form1.WORK_AREA, Form1.WORK_AREA, Form1.CELL_SIZE * 10, Color.Gray);
-        }
-
-        private void draw_grid(int w, int h, int indent, Color color)
-        {
-            int wid = w / indent;
-            int hei = h / indent;
-            for (int i = 0; i < wid; i++)
+            if (state == CameraState.TO_SCREEN)
             {
-                for (int j = 0; j < w; j++)
-                {
-                    Bitmap.SetPixel(j, i * indent, color);
-                }
+                original = Screen;
             }
-            for (int i = 0; i < hei; i++)
-            {
-                for (int j = 0; j < h; j++)
-                {
-                    Bitmap.SetPixel(i * indent, j, color);
-                }
-            }
+            base.newState(control, state);
         }
-        */
     }
 }

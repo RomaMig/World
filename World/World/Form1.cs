@@ -16,7 +16,9 @@ namespace World
         public const int WORK_AREA = 600;
         public const int CELL_SIZE = 10;
         private World world;
-        private DinamicCamera camera;
+        private DinamicCamera dinamincCamera;
+        private Camera miniCamera;
+        private Grid grid;
 
         public Form1()
         {
@@ -29,12 +31,13 @@ namespace World
         private void initWorld()
         {
             world = new World(new Size(WORK_AREA / CELL_SIZE, WORK_AREA / CELL_SIZE));
-            camera = new DinamicCamera(this, new Rectangle(0, 0, WORK_AREA, WORK_AREA), new Rectangle(0, 0, WORK_AREA, WORK_AREA), 2);
+            dinamincCamera = new DinamicCamera(this, new Rectangle(0, 0, WORK_AREA, WORK_AREA), new Rectangle(0, 0, WORK_AREA, WORK_AREA), 2);
+            miniCamera = new Camera(mini_map, new Rectangle(0, 0, WORK_AREA, WORK_AREA), new Rectangle(0, 0, mini_map.Width, mini_map.Height), Camera.CameraState.TO_SCREEN);
         }
 
         private void initForm()
         {
-            this.MouseWheel += camera.zoom;
+            this.MouseWheel += dinamincCamera.zoom;
             this.DoubleBuffered = true;
             this.Size = new Size(WORK_AREA + control_panel.Width + 16, WORK_AREA + 39);
             CenterToScreen();
@@ -52,11 +55,14 @@ namespace World
                     {
                         for (int m = 0; m < world[i, j].Size.Height; m++)
                         {
-                            camera.Add(world[i, j].heights[n, m]);
+                            dinamincCamera.Add(world[i, j].heights[n, m]);
+                            miniCamera.Add(world[i, j].heights[n, m]);
                         }
                     }
                 }
             }
+            dinamincCamera.Resize(this);
+            miniCamera.Resize(mini_map);
         }
 
         private void GenerateWorld()
@@ -66,17 +72,15 @@ namespace World
             progressBar1.Enabled = true;
             KeyPreview = false;
             move.Enabled = false;
-            //camera.collapse();
             progressBar1.Value = 1;
-            Invalidate();
             progressBar1.Value = 2;
             new Thread(() =>
             {
                 progressBar1.Value = 5;
                 world.Generate(progressBar1);
+                progressBar1.Value = 99;
                 AddHeights();
                 progressBar1.Value = 100;
-                Invalidate();
                 progressBar1.Visible = false;
                 progressBar1.Enabled = false;
                 KeyPreview = true;
@@ -97,22 +101,22 @@ namespace World
         {
             if (e.KeyCode == Keys.W)
             {
-                camera.VectorY = (int)(1 * camera.scale);
+                dinamincCamera.VectorY = (int)(1 * dinamincCamera.scale);
                 move.Enabled = true;
             }
             if (e.KeyCode == Keys.A)
             {
-                camera.VectorX = (int)(1 * camera.scale);
+                dinamincCamera.VectorX = (int)(1 * dinamincCamera.scale);
                 move.Enabled = true;
             }
             if (e.KeyCode == Keys.S)
             {
-                camera.VectorY = (int)(-1 * camera.scale);
+                dinamincCamera.VectorY = (int)(-1 * dinamincCamera.scale);
                 move.Enabled = true;
             }
             if (e.KeyCode == Keys.D)
             {
-                camera.VectorX = (int)(-1 * camera.scale);
+                dinamincCamera.VectorX = (int)(-1 * dinamincCamera.scale);
                 move.Enabled = true;
             }
             if (e.KeyCode == Keys.Add)
@@ -131,14 +135,14 @@ namespace World
         {
             if (e.KeyCode == Keys.W || e.KeyCode == Keys.S)
             {
-                camera.VectorY = 0;
-                if (camera.VectorX == 0 && camera.VectorY == 0)
+                dinamincCamera.VectorY = 0;
+                if (dinamincCamera.VectorX == 0 && dinamincCamera.VectorY == 0)
                     move.Enabled = false;
             }
             if (e.KeyCode == Keys.A || e.KeyCode == Keys.D)
             {
-                camera.VectorX = 0;
-                if (camera.VectorX == 0 && camera.VectorY == 0)
+                dinamincCamera.VectorX = 0;
+                if (dinamincCamera.VectorX == 0 && dinamincCamera.VectorY == 0)
                     move.Enabled = false;
             }
             if (e.KeyCode == Keys.Add)
@@ -163,19 +167,59 @@ namespace World
 
         private void check_grid_CheckedChanged(object sender, EventArgs e)
         {
-            //camera.GridPaint = check_grid.Checked;
-            //Invalidate();
+            if (check_grid.Checked)
+            {
+                if (grid == null) grid = new Grid();
+                dinamincCamera.Add(grid);
+            }
+            else
+            {
+                dinamincCamera.Remove(grid);
+                dinamincCamera.Repaint();
+            }
+            dinamincCamera.Resize(this);
         }
 
         private void zoom_Tick(object sender, EventArgs e)
         {
-            camera.zoom(this, (MouseEventArgs)zoom.Tag);
+            dinamincCamera.zoom(this, (MouseEventArgs)zoom.Tag);
         }
 
         private void move_Tick(object sender, EventArgs e)
         {
-            camera.Update();
+            dinamincCamera.Update();
             Invalidate();
+        }
+
+        public class Grid : IPaintable
+        {
+            public event EventHandler changed;
+
+            public void Paint(Bitmap bitmap)
+            {
+                DrawGrid(bitmap, Form1.WORK_AREA, Form1.WORK_AREA, Form1.CELL_SIZE, Color.LightGray);
+                DrawGrid(bitmap, Form1.WORK_AREA, Form1.WORK_AREA, Form1.CELL_SIZE * 10, Color.Gray);
+            }
+
+            private void DrawGrid(Bitmap bitmap, int w, int h, int indent, Color color)
+            {
+                int wid = w / indent;
+                int hei = h / indent;
+                for (int i = 0; i < wid; i++)
+                {
+                    for (int j = 0; j < w; j++)
+                    {
+                        bitmap.SetPixel(j, i * indent, color);
+                    }
+                }
+                for (int i = 0; i < hei; i++)
+                {
+                    for (int j = 0; j < h; j++)
+                    {
+                        bitmap.SetPixel(i * indent, j, color);
+                    }
+                }
+            }
         }
     }
 }

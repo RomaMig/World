@@ -9,12 +9,12 @@ using System.Windows.Forms;
 
 namespace World
 {
-    abstract class Camera
+    class Camera
     {
         protected Rectangle original;
+        protected List<IPaintable> queue;
         private Image img;
         private CameraState state;
-        private List<IPaintable> queue;
         public Bitmap Bitmap { get; set; }
         public Rectangle Screen { get; set; }
 
@@ -110,16 +110,10 @@ namespace World
             args.Graphics.DrawImageUnscaled(img, original);
         }
         
-        public void newState(Control control, CameraState state)
+        public virtual void newState(Control control, CameraState state)
         {
             this.state = state;
             Resize(control);
-        }
-
-        public virtual void collapse()
-        {
-            original.Width = 0;
-            original.Height = 0;
         }
     }
 }

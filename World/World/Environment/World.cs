@@ -44,10 +44,10 @@ namespace World
                 },
                 m1,
                 m2);
-            progress.Value = 97;
+            progress.Value = 96;
             heights.postprocessing();
             heights.normalizeWithExtention(0, 255, 0.98);
-            progress.Value = 98;
+            progress.Value = 97;
             for (int i = 0; i < w; i++)
             {
                 for (int j = 0; j < h; j++)
@@ -63,7 +63,7 @@ namespace World
                     }
                 }
             }
-            progress.Value = 99;
+            progress.Value = 98;
         }
     }
 
