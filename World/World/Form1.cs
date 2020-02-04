@@ -14,6 +14,7 @@ namespace World
     public partial class Form1 : Form
     {
         public const int WORK_AREA = 600;
+        public const int MAX_AREA = 700;
         public const int CELL_SIZE = 10;
         private World world;
         private DinamicCamera dinamincCamera;
@@ -32,7 +33,7 @@ namespace World
         private void initWorld()
         {
             world = new World(new Size(WORK_AREA / CELL_SIZE, WORK_AREA / CELL_SIZE));
-            dinamincCamera = new DinamicCamera(this, new Rectangle(0, 0, WORK_AREA, WORK_AREA), new Rectangle(0, 0, WORK_AREA, WORK_AREA), 2);
+            dinamincCamera = new DinamicCamera(this, new Rectangle(0, 0, WORK_AREA, WORK_AREA), new Rectangle(0, 0, WORK_AREA > 700 ? MAX_AREA : WORK_AREA, WORK_AREA > 700 ? MAX_AREA : WORK_AREA), 2);
             miniCamera = new Camera(mini_map, new Rectangle(0, 0, WORK_AREA, WORK_AREA), new Rectangle(0, 0, mini_map.Width, mini_map.Height), Camera.CameraState.TO_SCREEN);
         }
 
@@ -40,10 +41,12 @@ namespace World
         {
             this.MouseWheel += dinamincCamera.zoom;
             this.DoubleBuffered = true;
-            this.Size = new Size(WORK_AREA + control_panel.Width + 16, WORK_AREA + 39);
+            this.Size = new Size((WORK_AREA > 700 ? MAX_AREA : WORK_AREA) + control_panel.Width + 16, (WORK_AREA > 700 ? MAX_AREA : WORK_AREA) + 39);
             CenterToScreen();
             progressBar1.Size = new Size(WORK_AREA / 4, 23);
-            progressBar1.Location = new Point((WORK_AREA - progressBar1.Size.Width) / 2, (WORK_AREA - progressBar1.Size.Height) / 2);
+            progressBar1.Location = new Point(
+                ((WORK_AREA > 700 ? MAX_AREA : WORK_AREA) - progressBar1.Size.Width) / 2,
+                ((WORK_AREA > 700 ? MAX_AREA : WORK_AREA) - progressBar1.Size.Height) / 2);
             loadScreen = new Bitmap(1, 1);
             loadScreen.SetPixel(0, 0, Color.Transparent);
         }
@@ -225,6 +228,11 @@ namespace World
                     }
                 }
             }
+        }
+
+        private void Form1_Resize(object sender, EventArgs e)
+        {
+            
         }
     }
 }

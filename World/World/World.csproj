@@ -64,6 +64,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Environment\MapHeights\Voronov.cs" />
     <Compile Include="Environment\World.cs" />
+    <Compile Include="Utilites\Utilites.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
