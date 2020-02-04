@@ -45,6 +45,7 @@ namespace World
             progressBar1.Size = new Size(WORK_AREA / 4, 23);
             progressBar1.Location = new Point((WORK_AREA - progressBar1.Size.Width) / 2, (WORK_AREA - progressBar1.Size.Height) / 2);
             loadScreen = new Bitmap(1, 1);
+            loadScreen.SetPixel(0, 0, Color.Transparent);
         }
 
         private void AddHeights()

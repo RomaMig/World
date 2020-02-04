@@ -34,19 +34,7 @@ namespace World
             int h = Size.Height;
             Size sizeCell = new Size(Form1.CELL_SIZE, Form1.CELL_SIZE);
             progress.Value = 10;
-            Map m1 = Map.createDiamondSquare(w, h, 0.01);
-            progress.Value = 55;
-            Map m2 = Map.createNoise(w, h, (double)((int)(100000f / Form1.CELL_SIZE)) / 100000, 5, 6);
-            progress.Value = 95;
-            Map heights = Map.createUnion((int i, int j, Map[] m) =>
-                {
-                    return (m[0][i, j] + m[1][i, j] * (1 + m[0][i, j])) * 2;
-                },
-                m1,
-                m2);
-            progress.Value = 96;
-            heights.postprocessing();
-            heights.normalizeWithExtention(-1, 1, 0.98);
+            MapHeights heights = createMapHeights(progress, w, h);
             progress.Value = 97;
             for (int i = 0; i < w; i++)
             {
@@ -65,6 +53,25 @@ namespace World
             }
             progress.Value = 98;
         }
+
+        private MapHeights createMapHeights(ProgressBar progress, int w, int h)
+        {
+            MapHeights m1 = MapHeights.createDiamondSquare(w, h, 0.7);
+            progress.Value = 55;
+            MapHeights m2 = MapHeights.createNoise(w, h, (double)((int)(100000f / Form1.CELL_SIZE)) / 100000, 6, 15);
+            progress.Value = 94;
+            MapHeights heights = MapHeights.createUnion(
+                (int i, int j, MapHeights[] m) =>
+                {
+                    return m[0][i, j] + m[1][i, j] * (1 + m[0][i, j]) / 2;
+                },
+                m1,
+                m2);
+            progress.Value = 95;
+            heights.postprocessing();
+            heights.normalizeWithExtention(-1, 1, 0.98);
+            return heights;
+        }
     }
 
     class Cell
@@ -81,7 +88,7 @@ namespace World
             }
             set
             {
-                if (value < 0 || value > 255)
+                if (value < -1 || value > 1)
                     heights[i, j].Height = 0;
                 else
                     heights[i, j].Height = value;
@@ -140,6 +147,31 @@ namespace World
 
             private Color getColor(double a)
             {
+                if (a <= -.4)
+                    return Color.FromArgb(
+                        (int)Math.Round(-1f - 5f * a),
+                        (int)Math.Round(800f / 3f + 575f / 3f * a),
+                        (int)Math.Round(268f + 165f * a));
+                if (-.4 < a && a < -.3)
+                    return Color.FromArgb(
+                        (int)Math.Round(857f + 2140f * a),
+                        (int)Math.Round(322f + 330f * a),
+                        (int)Math.Round(266f + 160f * a));
+                if (-.3 <= a && a <= -.1)
+                    return Color.FromArgb(
+                        (int)Math.Round(259f + 90f * a),
+                        (int)Math.Round(457f / 2f + 45f * a),
+                        (int)Math.Round(415f / 2f + 45f * a));
+                if (-.1 < a && a < .3)
+                    return Color.FromArgb(
+                        (int)Math.Round(132f - 430f * a),
+                        (int)Math.Round(679f / 4f - 325f / 2f * a),
+                        (int)Math.Round(49f + 30f * a));
+                if (.3 <= a)
+                    return Color.FromArgb(
+                        (int)Math.Round(778f / 7f + 790f / 7f * a),
+                        (int)Math.Round(537f / 7f + 940f / 7f * a),
+                        (int)Math.Round(454f / 7f + 960f / 7f * a));
                 return Color.FromArgb(0, 0, 0);
             }
         }
