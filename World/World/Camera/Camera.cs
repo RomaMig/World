@@ -63,12 +63,12 @@ namespace World
             }
         }
 
-        public void Clear(Control control, Bitmap loadScreen)
+        public void Clear(Control control)
         {
             queue.ForEach((IPaintable p) => { p.changed -= OnChanged; });
             queue.Clear();
 
-            //img = loadScreen;
+            img = new Bitmap(Screen.Width, Screen.Height);
             control.Invalidate();
         }
 

@@ -49,20 +49,25 @@
     <Compile Include="Camera\Camera.cs" />
     <Compile Include="Camera\DinamicCamera.cs" />
     <Compile Include="Camera\IPaintable.cs" />
-    <Compile Include="Environment\MapHeights\DiamondSquare.cs" />
+    <Compile Include="Environment\Elements\Ground.cs" />
+    <Compile Include="Environment\Elements\IElement.cs" />
+    <Compile Include="Environment\Elements\Normal.cs" />
+    <Compile Include="Environment\Maps\MapHeights\DiamondSquare.cs" />
     <Compile Include="Entity\Entity.cs" />
-    <Compile Include="Environment\MapHeights\Union.cs" />
+    <Compile Include="Environment\Maps\MapHeights\Union.cs" />
+    <Compile Include="Environment\Elements\Water.cs" />
+    <Compile Include="Environment\Maps\MapNormals\MapNormals.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Environment\MapHeights\MapHeights.cs" />
-    <Compile Include="Environment\MapHeights\Noise.cs" />
+    <Compile Include="Environment\Maps\MapHeights\MapHeights.cs" />
+    <Compile Include="Environment\Maps\MapHeights\PerlinNoise.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Environment\MapHeights\Voronov.cs" />
+    <Compile Include="Environment\Maps\MapHeights\Voronoi.cs" />
     <Compile Include="Environment\World.cs" />
     <Compile Include="Utilites\Utilites.cs" />
     <EmbeddedResource Include="Form1.resx">
@@ -90,6 +95,9 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="images\layout_mountains.bmp" />
+    <Content Include="images\layout_sea.bmp" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

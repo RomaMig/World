@@ -19,8 +19,10 @@ namespace World
         private World world;
         private DinamicCamera dinamincCamera;
         private Camera miniCamera;
-        private Bitmap loadScreen;
+        private Camera normalCamera;
         private Grid grid;
+        private RadioButton[] buttonsOfType;
+        private int type;
 
         public Form1()
         {
@@ -33,25 +35,50 @@ namespace World
         private void initWorld()
         {
             world = new World(new Size(WORK_AREA / CELL_SIZE, WORK_AREA / CELL_SIZE));
-            dinamincCamera = new DinamicCamera(this, new Rectangle(0, 0, WORK_AREA, WORK_AREA), new Rectangle(0, 0, WORK_AREA > 700 ? MAX_AREA : WORK_AREA, WORK_AREA > 700 ? MAX_AREA : WORK_AREA), 2);
-            miniCamera = new Camera(mini_map, new Rectangle(0, 0, WORK_AREA, WORK_AREA), new Rectangle(0, 0, mini_map.Width, mini_map.Height), Camera.CameraState.TO_SCREEN);
+            type = 0;
+            dinamincCamera = new DinamicCamera(
+                this,
+                new Rectangle(miniMaps_panel.Width, 0, WORK_AREA, WORK_AREA),
+                new Rectangle(miniMaps_panel.Width, 0, WORK_AREA > 700 ? MAX_AREA : WORK_AREA, WORK_AREA > 700 ? MAX_AREA : WORK_AREA),
+                2);
+            miniCamera = new Camera(
+                mini_map,
+                new Rectangle(0, 0, WORK_AREA, WORK_AREA),
+                new Rectangle(0, 0, mini_map.Width, mini_map.Height),
+                Camera.CameraState.TO_SCREEN);
+            normalCamera = new Camera(
+                normalMap,
+                new Rectangle(0, 0, WORK_AREA, WORK_AREA),
+                new Rectangle(0, 0, normalMap.Width, normalMap.Height),
+                Camera.CameraState.TO_SCREEN);
         }
 
         private void initForm()
         {
             this.MouseWheel += dinamincCamera.zoom;
             this.DoubleBuffered = true;
-            this.Size = new Size((WORK_AREA > 700 ? MAX_AREA : WORK_AREA) + control_panel.Width + 16, (WORK_AREA > 700 ? MAX_AREA : WORK_AREA) + 39);
+            this.Size = new Size(
+                (WORK_AREA > 700 ? MAX_AREA : WORK_AREA) + control_panel.Width + miniMaps_panel.Width + 16,
+                (WORK_AREA > 700 ? MAX_AREA : WORK_AREA) + 39);
             CenterToScreen();
+            buttonsOfType = new RadioButton[8] 
+            { 
+                continent, 
+                archipelago,
+                mountains,
+                hills,
+                plains,
+                sea,
+                optional,
+                randomly
+            };
             progressBar1.Size = new Size(WORK_AREA / 4, 23);
             progressBar1.Location = new Point(
-                ((WORK_AREA > 700 ? MAX_AREA : WORK_AREA) - progressBar1.Size.Width) / 2,
-                ((WORK_AREA > 700 ? MAX_AREA : WORK_AREA) - progressBar1.Size.Height) / 2);
-            loadScreen = new Bitmap(1, 1);
-            loadScreen.SetPixel(0, 0, Color.Transparent);
+                dinamincCamera.Screen.X + (dinamincCamera.Screen.Width - progressBar1.Size.Width) / 2,
+                dinamincCamera.Screen.Y + (dinamincCamera.Screen.Height - progressBar1.Size.Height) / 2);
         }
 
-        private void AddHeights()
+        private void AddContentOnCamers()
         {
             for (int i = 0; i < world.Size.Width; i++)
             {
@@ -61,14 +88,16 @@ namespace World
                     {
                         for (int m = 0; m < world[i, j].Size.Height; m++)
                         {
-                            dinamincCamera.Add(world[i, j].heights[n, m]);
-                            miniCamera.Add(world[i, j].heights[n, m]);
+                            dinamincCamera.Add((IPaintable)world[i, j][n, m].Height);
+                            miniCamera.Add((IPaintable)world[i, j][n, m].Height);
+                            normalCamera.Add((IPaintable)world[i, j][n, m].Normal);
                         }
                     }
                 }
             }
             dinamincCamera.Resize(this);
             miniCamera.Resize(mini_map);
+            normalCamera.Resize(normalMap);
         }
 
         private void GenerateWorld()
@@ -79,15 +108,16 @@ namespace World
             KeyPreview = false;
             move.Enabled = false;
             progressBar1.Value = 1;
-            dinamincCamera.Clear(this, loadScreen);
-            miniCamera.Clear(mini_map, loadScreen);
+            dinamincCamera.Clear(this);
+            miniCamera.Clear(mini_map);
+            normalCamera.Clear(normalMap);
             progressBar1.Value = 2;
             new Thread(() =>
             {
                 progressBar1.Value = 5;
-                world.Generate(progressBar1);
+                world.Generate(progressBar1, type);
                 progressBar1.Value = 99;
-                AddHeights();
+                AddContentOnCamers();
                 progressBar1.Value = 100;
                 progressBar1.Visible = false;
                 progressBar1.Enabled = false;
@@ -170,7 +200,15 @@ namespace World
 
         private void Update_Map(object sender, EventArgs e)
         {
-            GenerateWorld();
+            try
+            {
+                GenerateWorld();
+            }
+            catch (Exception err)
+            {
+                MessageBox.Show(err.Message);
+            }
+            check_grid.Checked = false;
         }
 
         private void check_grid_CheckedChanged(object sender, EventArgs e)
@@ -198,8 +236,18 @@ namespace World
             dinamincCamera.Update();
             Invalidate();
         }
+        private void Form1_Resize(object sender, EventArgs e)
+        {
 
-        public class Grid : IPaintable
+        }
+
+        private void CheckedChanged(object sender, EventArgs e)
+        {
+            RadioButton radioButton = (RadioButton)sender;
+            type = Array.IndexOf(buttonsOfType, radioButton);
+        }
+
+        private class Grid : IPaintable
         {
             public event EventHandler changed;
 
@@ -228,11 +276,6 @@ namespace World
                     }
                 }
             }
-        }
-
-        private void Form1_Resize(object sender, EventArgs e)
-        {
-            
         }
     }
 }
