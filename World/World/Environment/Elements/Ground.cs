@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace World
 {   
-    struct Ground : IPaintable, IElement<double>
+    struct Ground : IPaintable, IBrightness, IElement<double>
     {
         private double height;
         private Color color;
@@ -28,13 +28,17 @@ namespace World
                     changed(this, null);
             }
         }
+        public float Brightness { get; set; }
+        public Vector3 Normal { get; set; }
 
-        public Ground(int x, int y, double value)
+        public Ground(int x, int y, double value, Vector3 normal)
         {
             Location = new Point(x, y);
             height = value;
             color = Color.Red;
             changed = null;
+            Brightness = .5f;
+            Normal = normal;
             Value = value;
         }
 
@@ -61,6 +65,11 @@ namespace World
                     (int)Math.Round(537f / 7f + 940f / 7f * value),
                     (int)Math.Round(454f / 7f + 960f / 7f * value));
             return Color.FromArgb(0, 255, 0);
+        }
+
+        public void updateBrightness()
+        {
+            color = Color.FromArgb((int)(Brightness * 255), color.R, color.G, color.B);
         }
     }
 }

@@ -34,8 +34,8 @@ namespace World
 
         private void initWorld()
         {
-            world = new World(new Size(WORK_AREA / CELL_SIZE, WORK_AREA / CELL_SIZE));
             type = 0;
+            world = new World(new Size(WORK_AREA / CELL_SIZE, WORK_AREA / CELL_SIZE));
             dinamincCamera = new DinamicCamera(
                 this,
                 new Rectangle(miniMaps_panel.Width, 0, WORK_AREA, WORK_AREA),
@@ -44,13 +44,11 @@ namespace World
             miniCamera = new Camera(
                 mini_map,
                 new Rectangle(0, 0, WORK_AREA, WORK_AREA),
-                new Rectangle(0, 0, mini_map.Width, mini_map.Height),
-                Camera.CameraState.TO_SCREEN);
+                new Rectangle(0, 0, mini_map.Width, mini_map.Height));
             normalCamera = new Camera(
                 normalMap,
                 new Rectangle(0, 0, WORK_AREA, WORK_AREA),
-                new Rectangle(0, 0, normalMap.Width, normalMap.Height),
-                Camera.CameraState.TO_SCREEN);
+                new Rectangle(0, 0, normalMap.Width, normalMap.Height));
         }
 
         private void initForm()
@@ -95,9 +93,12 @@ namespace World
                     }
                 }
             }
-            dinamincCamera.Resize(this);
-            miniCamera.Resize(mini_map);
-            normalCamera.Resize(normalMap);
+            dinamincCamera.UpdateImage();
+            miniCamera.UpdateImage();
+            normalCamera.UpdateImage();
+            this.Invalidate();
+            mini_map.Invalidate();
+            normalMap.Invalidate();
         }
 
         private void GenerateWorld()
@@ -107,16 +108,16 @@ namespace World
             progressBar1.Enabled = true;
             KeyPreview = false;
             move.Enabled = false;
-            progressBar1.Value = 1;
+            progressBar1.Value = 2;
             dinamincCamera.Clear(this);
             miniCamera.Clear(mini_map);
             normalCamera.Clear(normalMap);
-            progressBar1.Value = 2;
+            progressBar1.Value = 5;
             new Thread(() =>
             {
-                progressBar1.Value = 5;
+                progressBar1.Value = 10;
                 world.Generate(progressBar1, type);
-                progressBar1.Value = 99;
+                progressBar1.Value = 98;
                 AddContentOnCamers();
                 progressBar1.Value = 100;
                 progressBar1.Visible = false;
@@ -127,7 +128,7 @@ namespace World
 
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
-
+            //e.Graphics.FillRectangle(Brushes.Black, 0, 0, 700, 700);
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -139,22 +140,22 @@ namespace World
         {
             if (e.KeyCode == Keys.W)
             {
-                dinamincCamera.VectorY = (int)(1 * dinamincCamera.scale);
+                dinamincCamera.DirectionY = (int)(1 * dinamincCamera.Scale);
                 move.Enabled = true;
             }
             if (e.KeyCode == Keys.A)
             {
-                dinamincCamera.VectorX = (int)(1 * dinamincCamera.scale);
+                dinamincCamera.DirectionX = (int)(1 * dinamincCamera.Scale);
                 move.Enabled = true;
             }
             if (e.KeyCode == Keys.S)
             {
-                dinamincCamera.VectorY = (int)(-1 * dinamincCamera.scale);
+                dinamincCamera.DirectionY = (int)(-1 * dinamincCamera.Scale);
                 move.Enabled = true;
             }
             if (e.KeyCode == Keys.D)
             {
-                dinamincCamera.VectorX = (int)(-1 * dinamincCamera.scale);
+                dinamincCamera.DirectionX = (int)(-1 * dinamincCamera.Scale);
                 move.Enabled = true;
             }
             if (e.KeyCode == Keys.Add)
@@ -173,14 +174,14 @@ namespace World
         {
             if (e.KeyCode == Keys.W || e.KeyCode == Keys.S)
             {
-                dinamincCamera.VectorY = 0;
-                if (dinamincCamera.VectorX == 0 && dinamincCamera.VectorY == 0)
+                dinamincCamera.DirectionY = 0;
+                if (dinamincCamera.DirectionX == 0 && dinamincCamera.DirectionY == 0)
                     move.Enabled = false;
             }
             if (e.KeyCode == Keys.A || e.KeyCode == Keys.D)
             {
-                dinamincCamera.VectorX = 0;
-                if (dinamincCamera.VectorX == 0 && dinamincCamera.VectorY == 0)
+                dinamincCamera.DirectionX = 0;
+                if (dinamincCamera.DirectionX == 0 && dinamincCamera.DirectionY == 0)
                     move.Enabled = false;
             }
             if (e.KeyCode == Keys.Add)
@@ -223,7 +224,7 @@ namespace World
                 dinamincCamera.Remove(grid);
                 dinamincCamera.Repaint();
             }
-            dinamincCamera.Resize(this);
+            this.Invalidate();
         }
 
         private void zoom_Tick(object sender, EventArgs e)
@@ -276,6 +277,10 @@ namespace World
                     }
                 }
             }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
         }
     }
 }

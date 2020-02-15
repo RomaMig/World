@@ -17,7 +17,7 @@ namespace World
             {
                 for (int j = 0; j < Height; j++)
                 {
-                    map[i, j] = rules(i, j, maps);
+                    Map[i, j] = rules(i, j, maps);
                 }
             }
             if (isNormal)

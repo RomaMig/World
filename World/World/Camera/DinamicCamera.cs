@@ -11,37 +11,35 @@ namespace World
 {
     class DinamicCamera : Camera
     {
-        public double scale;
-        private Point vector;
+        private Point direction;
         public int Velocity { get; set; }
-        public int VectorX
+        public int DirectionX
         {
             get
             {
-                return vector.X;
+                return direction.X;
             }
             set
             {
-                vector.X = value * Velocity;
+                direction.X = value * Velocity;
             }
         }
-        public int VectorY
+        public int DirectionY
         {
             get
             {
-                return vector.Y;
+                return direction.Y;
             }
             set
             {
-                vector.Y = value * Velocity;
+                direction.Y = value * Velocity;
             }
         }
 
-        public DinamicCamera(Control control, Rectangle original, Rectangle screen, int velocity) : base(control, original, screen, CameraState.TO_IMAGE)
+        public DinamicCamera(Control control, Rectangle original, Rectangle screen, int velocity) : base(control, original, screen)
         {
             Velocity = velocity;
-            vector = new Point(0, 0);
-            scale = 1;
+            direction = new Point(0, 0);
         }
 
         public void Update()
@@ -52,28 +50,28 @@ namespace World
         public void zoom(Object sender, MouseEventArgs e)
         {
             Control control = (Control)sender;
-            if (queue.Count != 0 && Screen.Contains(e.Location) && State != CameraState.TO_SCREEN)
+            if (queue.Count != 0 && Screen.Contains(e.Location))
             {
                 int bSize = original.Width;
-                scale += e.Delta / 1000f;
-                if (scale < 1) scale = 1;
-                if (scale > 4) scale = 4;
-                vector.X = Math.Sign(vector.X) * (int)scale;
-                vector.Y = Math.Sign(vector.Y) * (int)scale;
-                int n = (int)(Screen.Width * scale);
+                Scale += e.Delta / 1000f;
+                if (Scale < 1) Scale = 1;
+                if (Scale > 4) Scale = 4;
+                direction.X = Math.Sign(direction.X) * (int)Scale;
+                direction.Y = Math.Sign(direction.Y) * (int)Scale;
+                int n = (int)(Screen.Width * Scale);
                 bSize = n - bSize;
                 original.Size = new Size(n, n);
                 PointF p = e.Location;
                 double propX = p.X / Screen.Size.Width;
                 double propY = p.Y / Screen.Size.Height;
                 move((int)(-bSize * propX), (int)(-bSize * propY));
-                Resize(control);
+                control.Invalidate();
             }
         }
 
         public void move()
         {
-            move(vector);
+            move(direction);
         }
 
         public void move(Point vector)
@@ -91,15 +89,6 @@ namespace World
                 if (original.Right < Screen.Right) original.X = Screen.Right - original.Width;
                 if (original.Bottom < Screen.Bottom) original.Y = Screen.Bottom - original.Height;
             }
-        }
-
-        public override void newState(Control control, CameraState state)
-        {
-            if (state == CameraState.TO_SCREEN)
-            {
-                original = Screen;
-            }
-            base.newState(control, state);
         }
     }
 }

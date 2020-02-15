@@ -43,7 +43,7 @@ namespace World
             {
                 for (int j = 0; j < Height; j++)
                 {
-                    map[i, j] = grid[i + 1, j + 1];
+                    Map[i, j] = grid[i + 1, j + 1];
                 }
             }
             normalizeWithExtention(-1, 1);

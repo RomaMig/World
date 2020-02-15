@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace World
 {
-    struct Water : IPaintable, IElement<double>
+    struct Water : IPaintable, IBrightness, IElement<double>
     {
         public const double seaLevel = -.3;
         private double deep;
@@ -31,6 +31,8 @@ namespace World
                 }
             }
         }
+        public Vector3 Normal { get; set; }
+        public float Brightness { get; set; }
 
         public event EventHandler changed;
 
@@ -40,6 +42,8 @@ namespace World
             deep = value;
             color = Color.Red;
             changed = null;
+            Brightness = .5f;
+            Normal = new Vector3(0, 0, 1);
             Value = value;
         }
 
@@ -61,6 +65,11 @@ namespace World
                     (int)Math.Round(322f + 330f * value),
                     (int)Math.Round(266f + 160f * value));
             return Color.FromArgb(0, 0, 255);
+        }
+
+        public void updateBrightness()
+        {
+            color = Color.FromArgb((int)(Brightness * 255), color.R, color.G, color.B);
         }
     }
 }

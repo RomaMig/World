@@ -5,7 +5,7 @@ namespace World
 {
     class PerlinNoise : MapHeights
     {
-        private FloatVector[,] grid;
+        private Vector2[,] grid;
         private readonly Size size;
         private readonly double step;
         private readonly int resolution;
@@ -19,14 +19,14 @@ namespace World
             min = defMin = -.5 * Math.Sqrt(2) / resolution;
             int w = width * resolution + 1;
             int h = height * resolution + 1;
-            grid = new FloatVector[w, h];
+            grid = new Vector2[w, h];
             Random random = new Random();
             for (var i = 0; i < w; i++)
             {
                 for (var j = 0; j < h; j++)
                 {
                     double angle = random.NextDouble();
-                    grid[i, j] = new FloatVector(Math.Cos(angle * 2 * Math.PI), Math.Sin(angle * 2 * Math.PI));
+                    grid[i, j] = new Vector2(Math.Cos(angle * 2 * Math.PI), Math.Sin(angle * 2 * Math.PI));
                 }
             }
             Generate();
@@ -58,24 +58,24 @@ namespace World
                     var vx1y0 = grid[xg + 1, yg];
                     var vx1y1 = grid[xg + 1, yg + 1];
                     var s = MultiplyVectors(vx0y0,
-                        new FloatVector(dx, dy));
+                        new Vector2(dx, dy));
                     var t = MultiplyVectors(vx1y0,
-                        new FloatVector(dx - 1, dy));
+                        new Vector2(dx - 1, dy));
                     var u = MultiplyVectors(vx0y1,
-                        new FloatVector(dx, dy - 1));
+                        new Vector2(dx, dy - 1));
                     var v = MultiplyVectors(vx1y1,
-                        new FloatVector(dx - 1, dy - 1));
+                        new Vector2(dx - 1, dy - 1));
 
                     double a = getWeightedAverage(s, t, dx);
                     double b = getWeightedAverage(u, v, dx);
                     double c = getWeightedAverage(a, b, dy);
 
-                    map[(int)Math.Round(x / step), (int)Math.Round(y / step)] = c / Math.Pow(2, resolution);
+                    Map[(int)Math.Round(x / step), (int)Math.Round(y / step)] = c / Math.Pow(2, resolution);
                 }
             }
         }
 
-        private double MultiplyVectors(FloatVector v1, FloatVector v2)
+        private double MultiplyVectors(Vector2 v1, Vector2 v2)
         {
             return v1.X * v2.X + v1.Y * v2.Y;
         }
@@ -105,7 +105,7 @@ namespace World
             {
                 for (int j = 0; j < Height; j++)
                 {
-                    map[i, j] += noise[i, j];
+                    Map[i, j] += noise[i, j];
                 }
             }
         }
@@ -123,18 +123,6 @@ namespace World
                 Console.WriteLine();
             }
             Console.WriteLine();
-        }
-
-        class FloatVector
-        {
-            public double X { get; set; }
-            public double Y { get; set; }
-            public FloatVector() { }
-            public FloatVector(double x, double y)
-            {
-                this.X = x;
-                this.Y = y;
-            }
         }
     }
 }

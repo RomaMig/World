@@ -11,29 +11,25 @@ namespace World
     {
         public readonly int Width;
         public readonly int Height;
-        protected double[,] map;
         protected double max, min;
         protected double defMax, defMin;
         public double[,] Map 
         {
-            get
-            {
-                return map;
-            }
+            get;
         }
         public double this[int i, int j]
         {
             get
             {
                 if (i >= 0 && j >= 0 && i < Width && j < Height)
-                    return map[i, j];
+                    return Map[i, j];
                 else
                     return 0;
             }
             set
             {
                 if (i >= 0 && j >= 0 && i < Width && j < Height)
-                    map[i, j] = value;
+                    Map[i, j] = value;
             }
         }
         public delegate MapHeights Creates(int w, int h);
@@ -50,7 +46,7 @@ namespace World
         {
             Width = width;
             Height = height;
-            map = new double[Width, Height];
+            Map = new double[Width, Height];
         }
 
         public static PerlinNoise createPerlinNoise(int w, int h, double step, int scale, int numOctaves)
@@ -237,7 +233,7 @@ namespace World
             {
                 for (int j = 0; j < Height; j++)
                 {
-                    map[i, j] = Math.Pow(map[i, j], power);
+                    Map[i, j] = Math.Pow(Map[i, j], power);
                 }
             }
         }
@@ -248,7 +244,7 @@ namespace World
             {
                 for (int j = 0; j < Height; j++)
                 {
-                    map[i, j] = Math.Sqrt(map[i, j]);
+                    Map[i, j] = Math.Sqrt(Map[i, j]);
                 }
             }
         }
@@ -273,7 +269,7 @@ namespace World
             {
                 for (int j = 0; j < Height; j++)
                 {
-                    map[i, j] = (map[i, j] - center) / range * newRange + newCenter;
+                    Map[i, j] = (Map[i, j] - center) / range * newRange + newCenter;
                 }
             }
             max = to;
@@ -336,13 +332,13 @@ namespace World
 
         private void UpdateMaxMin()
         {
-            max = min = map[0, 0];
+            max = min = Map[0, 0];
             for (int i = 0; i < Width; i++)
             {
                 for (int j = 0; j < Height; j++)
                 {
-                    if (min > map[i, j]) min = map[i, j];
-                    if (max < map[i, j]) max = map[i, j];
+                    if (min > Map[i, j]) min = Map[i, j];
+                    if (max < Map[i, j]) max = Map[i, j];
                 }
             }
         }
@@ -360,9 +356,9 @@ namespace World
                 {
                     for (int j = 0; j < Height; j++)
                     {
-                        if (map[i, j] > l && map[i, j] < r)
+                        if (Map[i, j] > l && Map[i, j] < r)
                         {
-                            map[i, j] += (rnd.NextDouble() - 0.4999) * roug;
+                            Map[i, j] += (rnd.NextDouble() - 0.4999) * roug;
                         }
                     }
                 }
@@ -383,7 +379,7 @@ namespace World
                 {
                     for (int j = 0; j < Height; j++)
                     {
-                        if (map[i, j] > l && map[i, j] < r)
+                        if (Map[i, j] > l && Map[i, j] < r)
                         {
                             double sum = 0;
                             int count = 0;
@@ -394,12 +390,12 @@ namespace World
                                     int k = i + n, s = j + m;
                                     if (k >= 0 && s >= 0 && k < Width && s < Height)
                                     {
-                                        sum += map[k, s];
+                                        sum += Map[k, s];
                                         count++;
                                     }
                                 }
                             }
-                            map[i, j] = sum / count;
+                            Map[i, j] = sum / count;
                         }
                     }
                 }
