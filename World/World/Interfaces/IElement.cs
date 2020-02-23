@@ -11,6 +11,7 @@ namespace World
     {
         T Value { get; set; }
         Point Location { get; set; }
+        Color Color { get; set; }
 
         Color getColor(T value);
     }

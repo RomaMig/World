@@ -43,6 +43,45 @@ namespace World
             return Lenght == 1;
         }
 
+        public void Rotate(float x, float y, float z)
+        {
+            RotateByX(x);
+            RotateByY(y);
+            RotateByZ(z);
+        }
+
+        public void RotateByX(float a)
+        {
+            float y = (float)(Math.Cos(a) * Y + Math.Sin(a) * Z);
+            float z = (float)(-Math.Sin(a) * Y + Math.Cos(a) * Z);
+            Y = y;
+            Z = z;
+        }
+
+        public void RotateByY(float a)
+        {
+            float x = (float)(Math.Cos(a) * X - Math.Sin(a) * Z);
+            float z = (float)(Math.Sin(a) * X + Math.Cos(a) * Z);
+            X = x;
+            Z = z;
+        }
+
+        public void RotateByZ(float a)
+        {
+            float x = (float)(Math.Cos(a) * X + Math.Sin(a) * Y);
+            float y = (float)(-Math.Sin(a) * X + Math.Cos(a) * Y);
+            X = x;
+            Y = y;
+        }
+
+        public static Vector3 normalize(Vector3 v)
+        {
+            return new Vector3(
+                v.X / v.Lenght,
+                v.Y / v.Lenght,
+                v.Z / v.Lenght);
+        }
+
         public static float Dot(Vector3 v1, Vector3 v2)
         {
             return v1.X * v2.X + v1.Y * v2.Y + v1.Z * v2.Z;

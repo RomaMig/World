@@ -13,9 +13,20 @@ namespace World
     {
         protected Rectangle original;
         protected List<IPaintable> queue;
-        private Image img;
+        private volatile Image img;
+        private volatile Bitmap bitmap;
         public float Scale { get; set; }
-        public Bitmap Bitmap { get; set; }
+        public Bitmap Bitmap
+        {
+            get
+            {
+                return bitmap;
+            }
+            set
+            {
+                bitmap = value;
+            }
+        }
         public Rectangle Screen { get; set; }
 
         /*
@@ -30,7 +41,7 @@ namespace World
             Screen = screen;
             Bitmap = new Bitmap(original.Width, original.Height);
             queue = new List<IPaintable>();
-            img = Bitmap;
+            newImage();
         }
 
         public void Add(params IPaintable[] p)
@@ -77,16 +88,23 @@ namespace World
             queue.ForEach((IPaintable p) => { p.Paint(Bitmap); });
         }
 
-        public void UpdateImage()
+        public void newImage()
         {
-            img = Bitmap;
+            img = new Bitmap(Bitmap);
         }
 
         private void Paint(object sender, PaintEventArgs args)
         {
             Graphics g = args.Graphics;
             g.ScaleTransform(Screen.Width * Scale / original.Width, Screen.Height * Scale / original.Height);
-            g.DrawImageUnscaledAndClipped(img, original);
+            try
+            {
+                g.DrawImageUnscaledAndClipped(img, original);
+            }
+            catch (InvalidOperationException e)
+            {
+
+            }
         }
     }
 }

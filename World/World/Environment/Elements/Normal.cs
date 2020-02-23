@@ -22,6 +22,20 @@ namespace World
             }
         }
         public Point Location { get; set; }
+        public Color Color
+        {
+            get
+            {
+                return color;
+            }
+            set
+            {
+                color = value;
+                if (changed != null)
+                    changed(this, null);
+            }
+        }
+
         public event EventHandler changed;
 
         public Normal(int x, int y, Vector3 value)

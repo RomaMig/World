@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,6 +37,14 @@ namespace World
                 }
             }
             return matrix;
+        }
+
+        public static Color FilterColor(Color c1, Color c2)
+        {
+            return Color.FromArgb(
+                (int)(c1.R * c2.R / 255f),
+                (int)(c1.G * c2.G / 255f),
+                (int)(c1.B * c2.B / 255f));
         }
 
         private static void dfs<T>(int i, int j, int width, int height, int color, int[,] visited, T[,] obj, Predicate<T> predicate, int deep)

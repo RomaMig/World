@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace World
-{   
+{
     struct Ground : IPaintable, IBrightness, IElement<double>
     {
         private double height;
@@ -22,14 +22,35 @@ namespace World
             set
             {
                 height = value;
-                IElement<double> e = this;
-                color = e.getColor(height);
+                color = BaseColor;
                 if (changed != null)
                     changed(this, null);
             }
         }
         public float Brightness { get; set; }
         public Vector3 Normal { get; set; }
+        public Color Color
+        {
+            get
+            {
+                return color;
+            }
+            set
+            {
+                color = value;
+                if (changed != null)
+                    changed(this, null);
+            }
+        }
+        public Color BaseColor
+        {
+            get
+            {
+                IElement<double> e = this;
+                return e.getColor(Value);
+            }
+        }
+        public Color ReflectColor { get; set; }
 
         public Ground(int x, int y, double value, Vector3 normal)
         {
@@ -39,6 +60,7 @@ namespace World
             changed = null;
             Brightness = .5f;
             Normal = normal;
+            ReflectColor = new Color();
             Value = value;
         }
 
@@ -69,7 +91,11 @@ namespace World
 
         public void updateBrightness()
         {
-            color = Color.FromArgb((int)(Brightness * 255), color.R, color.G, color.B);
+            HSB hsb = HSB.toHSB(BaseColor);
+            hsb.B = (int)(Brightness * 100);
+            Color = HSB.fromHSB(hsb);
+            Color = Utilites.FilterColor(HSB.fromHSB(hsb), ReflectColor);
+            //color = Color.FromArgb((int)(Brightness * 255), color.R, color.G, color.B);
         }
     }
 }

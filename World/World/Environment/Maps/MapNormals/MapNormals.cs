@@ -6,28 +6,11 @@ using System.Threading.Tasks;
 
 namespace World
 {
-    class MapNormals
+    class MapNormals : Maps<Vector3>
     {
-        private int width;
-        private int height;
-        private Vector3[,] map;
-        public Vector3 this[int i, int j]
+        public MapNormals(int width, int height) : base(width, height)
         {
-            get
-            {
-                return map[i, j];
-            }
-            set
-            {
-                map[i, j] = value;
-            }
-        }
 
-        public MapNormals(int width, int height)
-        {
-            this.width = width;
-            this.height = height;
-            map = new Vector3[width, height];
         }
 
         public MapNormals(int width, int height, double[,] heights) : this(width, height)
@@ -42,11 +25,11 @@ namespace World
 
         public void Build(double[,] heights)
         {
-            for (int i = 0; i < width; i++)
+            for (int i = 0; i < Width; i++)
             {
-                for (int j = 0; j < height; j++)
+                for (int j = 0; j < Height; j++)
                 {
-                    map[i, j] = Vector3.Cross(xVector(i, j, heights), yVector(i, j, heights)).normalize();
+                    this[i, j] = Vector3.Cross(xVector(i, j, heights), yVector(i, j, heights)).normalize();
                 }
             }
         }
@@ -56,7 +39,7 @@ namespace World
             int li = i - 1;
             int ri = i + 1;
             if (li < 0) li = 0;
-            if (ri > width - 1) ri = width - 1;
+            if (ri > Width - 1) ri = Width - 1;
             return new Vector3(1f / 63.75f, 0, (float)(heights[ri, j] - heights[li, j]));
         }
         private Vector3 yVector(int i, int j, double[,] heights)
@@ -64,7 +47,7 @@ namespace World
             int tj = j - 1;
             int bj = j + 1;
             if (tj < 0) tj = 0;
-            if (bj > height - 1) bj = height - 1;
+            if (bj > Height - 1) bj = Height - 1;
             return new Vector3(0, 1f / 63.75f, (float)(heights[i, bj] - heights[i, tj]));
         }
     }

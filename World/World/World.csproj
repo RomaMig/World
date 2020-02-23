@@ -48,6 +48,8 @@
   <ItemGroup>
     <Compile Include="Camera\Camera.cs" />
     <Compile Include="Camera\DinamicCamera.cs" />
+    <Compile Include="Environment\Light\DinamicLight.cs" />
+    <Compile Include="Environment\Maps\MapShadows\MapShadows.cs" />
     <Compile Include="Interfaces\IChangable.cs" />
     <Compile Include="Interfaces\IPaintable.cs" />
     <Compile Include="Environment\Elements\Ground.cs" />
@@ -70,10 +72,14 @@
     </Compile>
     <Compile Include="Environment\Maps\MapHeights\MapHeights.cs" />
     <Compile Include="Environment\Maps\MapHeights\PerlinNoise.cs" />
+    <Compile Include="Environment\Maps\Maps.cs" />
+    <Compile Include="Interfaces\ITask.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Environment\Maps\MapHeights\Voronoi.cs" />
     <Compile Include="Environment\World\World.cs" />
+    <Compile Include="Utilites\Grid.cs" />
+    <Compile Include="Utilites\HSB.cs" />
     <Compile Include="Utilites\Point3.cs" />
     <Compile Include="Utilites\Utilites.cs" />
     <Compile Include="Utilites\Vector2.cs" />

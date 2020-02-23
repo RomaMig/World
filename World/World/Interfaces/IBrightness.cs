@@ -12,6 +12,8 @@ namespace World
         Point Location { get; set; }
         Vector3 Normal { get; set; }
         float Brightness { get; set; }
+        Color ReflectColor { get; set; }
+
 
         void updateBrightness();
     }

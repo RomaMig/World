@@ -24,8 +24,7 @@ namespace World
                 if (value >= -1 && value <= seaLevel)
                 {
                     deep = value;
-                    IElement<double> e = this;
-                    color = e.getColor(deep);
+                    color = BaseColor;
                     if (changed != null)
                         changed(this, null);
                 }
@@ -33,6 +32,28 @@ namespace World
         }
         public Vector3 Normal { get; set; }
         public float Brightness { get; set; }
+        public Color Color
+        {
+            get
+            {
+                return color;
+            }
+            set
+            {
+                color = value;
+                if (changed != null)
+                    changed(this, null);
+            }
+        }
+        public Color BaseColor
+        {
+            get
+            {
+                IElement<double> e = this;
+                return e.getColor(Value);
+            }
+        }
+        public Color ReflectColor { get; set; }
 
         public event EventHandler changed;
 
@@ -44,6 +65,7 @@ namespace World
             changed = null;
             Brightness = .5f;
             Normal = new Vector3(0, 0, 1);
+            ReflectColor = new Color();
             Value = value;
         }
 
@@ -69,7 +91,10 @@ namespace World
 
         public void updateBrightness()
         {
-            color = Color.FromArgb((int)(Brightness * 255), color.R, color.G, color.B);
+            HSB hsb = HSB.toHSB(BaseColor);
+            hsb.B = (int)(Brightness * 100);
+            Color = Utilites.FilterColor(HSB.fromHSB(hsb), ReflectColor);
+            //color = Color.FromArgb((int)(Brightness * 255), color.R, color.G, color.B);
         }
     }
 }

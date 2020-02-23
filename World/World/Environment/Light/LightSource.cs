@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace World
 {
-    struct LightSource : IChangable
+    class LightSource : IChangable
     {
         private Point3 location;
         private Vector3 direction;

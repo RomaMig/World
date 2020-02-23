@@ -13,9 +13,10 @@ namespace World
 {
     public partial class Form1 : Form
     {
-        public const int WORK_AREA = 600;
-        public const int MAX_AREA = 700;
+        public const int WORLD_SIZE = 600;
+        public const int MAX_SIZE = 700;
         public const int CELL_SIZE = 10;
+        public readonly Point WORLD_LOCATION;
         private World world;
         private DinamicCamera dinamincCamera;
         private Camera miniCamera;
@@ -27,6 +28,7 @@ namespace World
         public Form1()
         {
             InitializeComponent();
+            WORLD_LOCATION = new Point(miniMaps_panel.Width, 0);
             initWorld();
             GenerateWorld();
             initForm();
@@ -35,33 +37,33 @@ namespace World
         private void initWorld()
         {
             type = 0;
-            world = new World(new Size(WORK_AREA / CELL_SIZE, WORK_AREA / CELL_SIZE));
             dinamincCamera = new DinamicCamera(
                 this,
-                new Rectangle(miniMaps_panel.Width, 0, WORK_AREA, WORK_AREA),
-                new Rectangle(miniMaps_panel.Width, 0, WORK_AREA > 700 ? MAX_AREA : WORK_AREA, WORK_AREA > 700 ? MAX_AREA : WORK_AREA),
+                new Rectangle(WORLD_LOCATION.X, WORLD_LOCATION.Y, WORLD_SIZE, WORLD_SIZE),
+                new Rectangle(WORLD_LOCATION.X, WORLD_LOCATION.Y, WORLD_SIZE > 700 ? MAX_SIZE : WORLD_SIZE, WORLD_SIZE > 700 ? MAX_SIZE : WORLD_SIZE),
                 2);
             miniCamera = new Camera(
                 mini_map,
-                new Rectangle(0, 0, WORK_AREA, WORK_AREA),
+                new Rectangle(0, 0, WORLD_SIZE, WORLD_SIZE),
                 new Rectangle(0, 0, mini_map.Width, mini_map.Height));
             normalCamera = new Camera(
                 normalMap,
-                new Rectangle(0, 0, WORK_AREA, WORK_AREA),
+                new Rectangle(0, 0, WORLD_SIZE, WORLD_SIZE),
                 new Rectangle(0, 0, normalMap.Width, normalMap.Height));
+            world = new World(this, new Size(WORLD_SIZE / CELL_SIZE, WORLD_SIZE / CELL_SIZE), dinamincCamera);
         }
 
         private void initForm()
         {
-            this.MouseWheel += dinamincCamera.zoom;
+            this.MouseWheel += zoom_Event;
             this.DoubleBuffered = true;
             this.Size = new Size(
-                (WORK_AREA > 700 ? MAX_AREA : WORK_AREA) + control_panel.Width + miniMaps_panel.Width + 16,
-                (WORK_AREA > 700 ? MAX_AREA : WORK_AREA) + 39);
+                (WORLD_SIZE > 700 ? MAX_SIZE : WORLD_SIZE) + control_panel.Width + miniMaps_panel.Width + 16,
+                (WORLD_SIZE > 700 ? MAX_SIZE : WORLD_SIZE) + 39);
             CenterToScreen();
-            buttonsOfType = new RadioButton[8] 
-            { 
-                continent, 
+            buttonsOfType = new RadioButton[8]
+            {
+                continent,
                 archipelago,
                 mountains,
                 hills,
@@ -70,7 +72,7 @@ namespace World
                 optional,
                 randomly
             };
-            progressBar1.Size = new Size(WORK_AREA / 4, 23);
+            progressBar1.Size = new Size(WORLD_SIZE / 4, 23);
             progressBar1.Location = new Point(
                 dinamincCamera.Screen.X + (dinamincCamera.Screen.Width - progressBar1.Size.Width) / 2,
                 dinamincCamera.Screen.Y + (dinamincCamera.Screen.Height - progressBar1.Size.Height) / 2);
@@ -78,13 +80,13 @@ namespace World
 
         private void AddContentOnCamers()
         {
-            for (int i = 0; i < world.Size.Width; i++)
+            for (int i = 0; i < world.Width; i++)
             {
-                for (int j = 0; j < world.Size.Height; j++)
+                for (int j = 0; j < world.Height; j++)
                 {
-                    for (int n = 0; n < world[i, j].Size.Width; n++)
+                    for (int n = 0; n < world[i, j].Width; n++)
                     {
-                        for (int m = 0; m < world[i, j].Size.Height; m++)
+                        for (int m = 0; m < world[i, j].Height; m++)
                         {
                             dinamincCamera.Add((IPaintable)world[i, j][n, m].Height);
                             miniCamera.Add((IPaintable)world[i, j][n, m].Height);
@@ -93,9 +95,9 @@ namespace World
                     }
                 }
             }
-            dinamincCamera.UpdateImage();
-            miniCamera.UpdateImage();
-            normalCamera.UpdateImage();
+            dinamincCamera.newImage();
+            miniCamera.newImage();
+            normalCamera.newImage();
             this.Invalidate();
             mini_map.Invalidate();
             normalMap.Invalidate();
@@ -103,19 +105,19 @@ namespace World
 
         private void GenerateWorld()
         {
-            progressBar1.Value = 0;
-            progressBar1.Visible = true;
-            progressBar1.Enabled = true;
-            KeyPreview = false;
-            move.Enabled = false;
-            progressBar1.Value = 2;
-            dinamincCamera.Clear(this);
-            miniCamera.Clear(mini_map);
-            normalCamera.Clear(normalMap);
-            progressBar1.Value = 5;
-            new Thread(() =>
+            Task.Run(() =>
             {
-                progressBar1.Value = 10;
+                KeyPreview = false;
+                move.Enabled = false;
+
+                dinamincCamera.Clear(this);
+                miniCamera.Clear(mini_map);
+                normalCamera.Clear(normalMap);
+
+                progressBar1.Value = 0;
+                progressBar1.Visible = true;
+                progressBar1.Enabled = true;
+                progressBar1.Value = 8;
                 world.Generate(progressBar1, type);
                 progressBar1.Value = 98;
                 AddContentOnCamers();
@@ -123,7 +125,8 @@ namespace World
                 progressBar1.Visible = false;
                 progressBar1.Enabled = false;
                 KeyPreview = true;
-            }).Start();
+                world.Start();
+            });
         }
 
         private void Form1_Paint(object sender, PaintEventArgs e)
@@ -133,7 +136,7 @@ namespace World
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-
+            world.Stop();
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
@@ -160,12 +163,12 @@ namespace World
             }
             if (e.KeyCode == Keys.Add)
             {
-                zoom.Tag = new MouseEventArgs(MouseButtons.None, 0, WORK_AREA / 2, WORK_AREA / 2, 10);
+                zoom.Tag = new MouseEventArgs(MouseButtons.None, 0, WORLD_LOCATION.X + WORLD_SIZE / 2, WORLD_LOCATION.Y + WORLD_SIZE / 2, 10);
                 zoom.Enabled = true;
             }
             if (e.KeyCode == Keys.Subtract)
             {
-                zoom.Tag = new MouseEventArgs(MouseButtons.None, 0, WORK_AREA / 2, WORK_AREA / 2, -10);
+                zoom.Tag = new MouseEventArgs(MouseButtons.None, 0, WORLD_LOCATION.X + WORLD_SIZE / 2, WORLD_LOCATION.Y + WORLD_SIZE / 2, -10);
                 zoom.Enabled = true;
             }
         }
@@ -201,14 +204,7 @@ namespace World
 
         private void Update_Map(object sender, EventArgs e)
         {
-            try
-            {
-                GenerateWorld();
-            }
-            catch (Exception err)
-            {
-                MessageBox.Show(err.Message);
-            }
+            GenerateWorld();
             check_grid.Checked = false;
         }
 
@@ -224,12 +220,18 @@ namespace World
                 dinamincCamera.Remove(grid);
                 dinamincCamera.Repaint();
             }
-            this.Invalidate();
+            Invalidate();
         }
 
         private void zoom_Tick(object sender, EventArgs e)
         {
-            dinamincCamera.zoom(this, (MouseEventArgs)zoom.Tag);
+            zoom_Event(this, (MouseEventArgs)zoom.Tag);
+        }
+
+        private void zoom_Event(object sender, MouseEventArgs e)
+        {
+            dinamincCamera.zoom(e);
+            Invalidate();
         }
 
         private void move_Tick(object sender, EventArgs e)
@@ -248,39 +250,9 @@ namespace World
             type = Array.IndexOf(buttonsOfType, radioButton);
         }
 
-        private class Grid : IPaintable
-        {
-            public event EventHandler changed;
-
-            public void Paint(Bitmap bitmap)
-            {
-                DrawGrid(bitmap, Form1.WORK_AREA, Form1.WORK_AREA, Form1.CELL_SIZE, Color.LightGray);
-                DrawGrid(bitmap, Form1.WORK_AREA, Form1.WORK_AREA, Form1.CELL_SIZE * 10, Color.Gray);
-            }
-
-            private void DrawGrid(Bitmap bitmap, int w, int h, int indent, Color color)
-            {
-                int wid = w / indent;
-                int hei = h / indent;
-                for (int i = 0; i < wid; i++)
-                {
-                    for (int j = 0; j < w; j++)
-                    {
-                        bitmap.SetPixel(j, i * indent, color);
-                    }
-                }
-                for (int i = 0; i < hei; i++)
-                {
-                    for (int j = 0; j < h; j++)
-                    {
-                        bitmap.SetPixel(i * indent, j, color);
-                    }
-                }
-            }
-        }
-
         private void button2_Click(object sender, EventArgs e)
         {
+
         }
     }
 }

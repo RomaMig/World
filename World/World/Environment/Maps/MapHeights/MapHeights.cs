@@ -7,17 +7,11 @@ using System.Threading.Tasks;
 
 namespace World
 {
-    abstract class MapHeights
+    abstract class MapHeights : Maps<double>
     {
-        public readonly int Width;
-        public readonly int Height;
         protected double max, min;
         protected double defMax, defMin;
-        public double[,] Map 
-        {
-            get;
-        }
-        public double this[int i, int j]
+        public new double this[int i, int j]
         {
             get
             {
@@ -42,11 +36,10 @@ namespace World
             createSeabed,
             createLandscape
         };
-        public MapHeights(int width, int height)
+
+        public MapHeights(int width, int height) : base(width, height)
         {
-            Width = width;
-            Height = height;
-            Map = new double[Width, Height];
+
         }
 
         public static PerlinNoise createPerlinNoise(int w, int h, double step, int scale, int numOctaves)

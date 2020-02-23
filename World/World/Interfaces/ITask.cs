@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace World
 {
-    interface IPaintable : IChangable
+    interface ITask
     {
-
-
-        void Paint(Bitmap bitmap);
+        bool Runnable { get; set; }
+        Task Task { get; set; }
     }
 }

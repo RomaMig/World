@@ -7,29 +7,14 @@ using System.Threading.Tasks;
 
 namespace World
 {
-    class Cell
+    class Cell : Maps<Cell.Property>
     {
         public List<IEntity> Entities { get; set; }
         public Point Location { get; set; }
-        public Size Size { get; set; }
-        public Property[,] Properties { get; }
-        public Property this[int i, int j]
-        {
-            get
-            {
-                return Properties[i, j];
-            }
-            set
-            {
-                Properties[i, j] = value;
-            }
-        }
 
-        public Cell(int x, int y, Size size)
+        public Cell(int x, int y, Size size) : base(size.Width, size.Height)
         {
-            Size = size;
-            Location = new Point(x * Size.Width, y * Size.Height);
-            Properties = new Property[Size.Width, Size.Height];
+            Location = new Point(x * Width, y * Height);
             Entities = new List<IEntity>();
         }
 

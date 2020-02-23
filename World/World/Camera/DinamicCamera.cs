@@ -47,9 +47,8 @@ namespace World
             move();
         }
 
-        public void zoom(Object sender, MouseEventArgs e)
+        public void zoom(MouseEventArgs e)
         {
-            Control control = (Control)sender;
             if (queue.Count != 0 && Screen.Contains(e.Location))
             {
                 int bSize = original.Width;
@@ -62,10 +61,9 @@ namespace World
                 bSize = n - bSize;
                 original.Size = new Size(n, n);
                 PointF p = e.Location;
-                double propX = p.X / Screen.Size.Width;
-                double propY = p.Y / Screen.Size.Height;
+                double propX = (p.X - Screen.X) / Screen.Size.Width;
+                double propY = (p.Y - Screen.Y) / Screen.Size.Height;
                 move((int)(-bSize * propX), (int)(-bSize * propY));
-                control.Invalidate();
             }
         }
 
