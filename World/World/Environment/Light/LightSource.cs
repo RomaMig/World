@@ -5,10 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using World.Environment;
+using World.Utilite;
 
-namespace World
+namespace World.Environment.Light
 {
-    class LightSource : IChangable
+    class LightSource
     {
         private Point3 location;
         private Vector3 direction;

@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using World.Environment.Light;
 
-namespace World
+namespace World.Environment.Map
 {
     class MapShadows : Maps<bool>
     {

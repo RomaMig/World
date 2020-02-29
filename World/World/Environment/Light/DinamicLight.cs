@@ -5,8 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using World.Environment;
+using World.Interfaces;
+using World.Utilite;
 
-namespace World
+namespace World.Environment.Light
 {
     class DinamicLight : LightSource, ITask
     {
@@ -61,6 +64,11 @@ namespace World
                 Runnable = true;
                 Task.Start();
             }
+        }
+
+        public void Stop()
+        {
+            Runnable = false;
         }
     }
 }

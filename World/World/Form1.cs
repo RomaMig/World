@@ -8,6 +8,11 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using World.Cameras;
+using World.Environment.Map;
+using World.Environment;
+using World.Utilite;
+using World.EngineSystem;
 
 namespace World
 {
@@ -17,10 +22,11 @@ namespace World
         public const int MAX_SIZE = 700;
         public const int CELL_SIZE = 10;
         public readonly Point WORLD_LOCATION;
-        private World world;
+        private MapWorld world;
         private DinamicCamera dinamincCamera;
         private Camera miniCamera;
         private Camera normalCamera;
+        private Camera tempCamera;
         private Grid grid;
         private RadioButton[] buttonsOfType;
         private int type;
@@ -47,10 +53,20 @@ namespace World
                 new Rectangle(0, 0, WORLD_SIZE, WORLD_SIZE),
                 new Rectangle(0, 0, mini_map.Width, mini_map.Height));
             normalCamera = new Camera(
-                normalMap,
+                normal_map,
                 new Rectangle(0, 0, WORLD_SIZE, WORLD_SIZE),
-                new Rectangle(0, 0, normalMap.Width, normalMap.Height));
-            world = new World(this, new Size(WORLD_SIZE / CELL_SIZE, WORLD_SIZE / CELL_SIZE), dinamincCamera);
+                new Rectangle(0, 0, normal_map.Width, normal_map.Height));
+            tempCamera = new Camera(
+                temp_map,
+                new Rectangle(0, 0, WORLD_SIZE / CELL_SIZE, WORLD_SIZE / CELL_SIZE),
+                new Rectangle(0, 0, temp_map.Width, temp_map.Height));
+            world = new MapWorld(new Size(WORLD_SIZE / CELL_SIZE, WORLD_SIZE / CELL_SIZE));
+            world.Engine.AddPost(
+                dinamincCamera,
+                //miniCamera,
+                //normalCamera,
+                tempCamera
+                );
         }
 
         private void initForm()
@@ -93,14 +109,17 @@ namespace World
                             normalCamera.Add((IPaintable)world[i, j][n, m].Normal);
                         }
                     }
+                    tempCamera.Add((IPaintable)world[i, j].Temperature);
                 }
             }
-            dinamincCamera.newImage();
-            miniCamera.newImage();
-            normalCamera.newImage();
-            this.Invalidate();
-            mini_map.Invalidate();
-            normalMap.Invalidate();
+            dinamincCamera.Update().Wait();
+            miniCamera.Update().Wait();
+            normalCamera.Update().Wait();
+            tempCamera.Update().Wait();
+            PaintCamera(dinamincCamera, this);
+            PaintCamera(miniCamera, mini_map);
+            PaintCamera(normalCamera, normal_map);
+            PaintCamera(tempCamera, temp_map);
         }
 
         private void GenerateWorld()
@@ -110,9 +129,12 @@ namespace World
                 KeyPreview = false;
                 move.Enabled = false;
 
+                world.Engine.Stop();
+
                 dinamincCamera.Clear(this);
                 miniCamera.Clear(mini_map);
-                normalCamera.Clear(normalMap);
+                normalCamera.Clear(normal_map);
+                tempCamera.Clear(temp_map);
 
                 progressBar1.Value = 0;
                 progressBar1.Visible = true;
@@ -121,12 +143,30 @@ namespace World
                 world.Generate(progressBar1, type);
                 progressBar1.Value = 98;
                 AddContentOnCamers();
+                world.Engine.Start();
+                progressBar1.Value = 99;
+                world.Engine.Work(null,
+                    () =>
+                    {
+                        PaintCamera(dinamincCamera, this);
+                        PaintCamera(tempCamera, temp_map);
+                        Text = world.Engine.Watch.ElapsedMilliseconds + "";
+                    },
+                    (Exception e) =>
+                    {
+                        MessageBox.Show(e.StackTrace+"\n"+e.InnerException);
+                    });
                 progressBar1.Value = 100;
                 progressBar1.Visible = false;
                 progressBar1.Enabled = false;
                 KeyPreview = true;
-                world.Start();
             });
+        }
+
+        private void PaintCamera(Camera cam, Control con)
+        {
+            cam.newImage();
+            con.Invalidate();
         }
 
         private void Form1_Paint(object sender, PaintEventArgs e)
@@ -136,7 +176,7 @@ namespace World
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            world.Stop();
+            world.Engine.Stop();
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
@@ -236,7 +276,7 @@ namespace World
 
         private void move_Tick(object sender, EventArgs e)
         {
-            dinamincCamera.Update();
+            dinamincCamera.Moving();
             Invalidate();
         }
         private void Form1_Resize(object sender, EventArgs e)
@@ -251,8 +291,22 @@ namespace World
         }
 
         private void button2_Click(object sender, EventArgs e)
-        {
-
+        {/*
+            tempCamera.newImage();
+            temp_map.Invalidate();*/
+            for (int i = 0; i < world.Width; i++)
+            {
+                for (int j = 0; j < world.Height; j++)
+                {
+                    for (int n = 0; n < world[i, j].Width; n++)
+                    {
+                        for (int m = 0; m < world[i, j].Height; m++)
+                        {
+                            world[i, j][n, m].Height.Value += 0.1;
+                        }
+                    }
+                }
+            }
         }
     }
 }

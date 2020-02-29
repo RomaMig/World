@@ -4,8 +4,9 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using World.Utilite;
 
-namespace World
+namespace World.Environment.Map
 {
     abstract class MapHeights : Maps<double>
     {

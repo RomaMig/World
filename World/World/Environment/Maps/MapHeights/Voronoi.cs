@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace World
+namespace World.Environment.Map
 {
     class Voronoi : MapHeights
     {

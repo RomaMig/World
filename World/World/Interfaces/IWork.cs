@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace World.Interfaces
 {
-    interface ITask : IWork
+    interface IWork
     {
-        bool Runnable { get; set; }
-        Task Task { get; set; }
+        void Start();
+        void Stop();
     }
 }

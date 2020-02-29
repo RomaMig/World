@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Drawing;
+using World.Cameras;
+using World.Environment;
+using World.Utilite;
 
-namespace World
+namespace World.Environment.Elements
 {
-    class Normal : IPaintable, IElement<Vector3>
+    class Normal : Element<Vector3>, IPaintable
     {
         private Vector3 normal;
         private Color color;
-        public Vector3 Value
+        public new Vector3 Value
         {
             get
             {
@@ -16,13 +19,12 @@ namespace World
             set
             {
                 normal = value;
-                color = getColor(normal);
-                if (changed != null)
-                    changed(this, null);
+                if (!normal.isNormal())
+                    normal.normalize();
+                Color = getColor(normal);
             }
         }
-        public Point Location { get; set; }
-        public Color Color
+        public new Color Color
         {
             get
             {
@@ -31,23 +33,21 @@ namespace World
             set
             {
                 color = value;
-                if (changed != null)
-                    changed(this, null);
+                Repaint(this);
             }
         }
 
-        public event EventHandler changed;
-
-        public Normal(int x, int y, Vector3 value)
+        public Normal(int x, int y, Vector3 value) : base(x, y)
         {
-            Location = new Point(x, y);
-            normal = value;
-            color = Color.Red;
-            changed = null;
             Value = value;
         }
 
-        public Color getColor(Vector3 value)
+        public override void Paint(Bitmap bitmap)
+        {
+            bitmap.SetPixel(Location.X, Location.Y, color);
+        }
+
+        protected override Color getColor(Vector3 value)
         {
             if (value.isNormal())
             {
@@ -57,11 +57,6 @@ namespace World
                 return Color.FromArgb(r, g, b);
             }
             return Color.Red;
-        }
-
-        public void Paint(Bitmap bitmap)
-        {
-            bitmap.SetPixel(Location.X, Location.Y, color);
         }
     }
 }

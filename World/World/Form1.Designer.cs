@@ -30,7 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.UpdateMap = new System.Windows.Forms.Button();
-            this.settings_map = new System.Windows.Forms.GroupBox();
+            this.settings_map_panel = new System.Windows.Forms.GroupBox();
             this.randomly = new System.Windows.Forms.RadioButton();
             this.optional = new System.Windows.Forms.RadioButton();
             this.sea = new System.Windows.Forms.RadioButton();
@@ -48,8 +48,9 @@
             this.mini_map = new System.Windows.Forms.Panel();
             this.zoom = new System.Windows.Forms.Timer(this.components);
             this.miniMaps_panel = new System.Windows.Forms.GroupBox();
-            this.normalMap = new System.Windows.Forms.Panel();
-            this.settings_map.SuspendLayout();
+            this.normal_map = new System.Windows.Forms.Panel();
+            this.temp_map = new System.Windows.Forms.Panel();
+            this.settings_map_panel.SuspendLayout();
             this.control_panel.SuspendLayout();
             this.mini_map_title.SuspendLayout();
             this.miniMaps_panel.SuspendLayout();
@@ -65,25 +66,25 @@
             this.UpdateMap.UseVisualStyleBackColor = true;
             this.UpdateMap.Click += new System.EventHandler(this.Update_Map);
             // 
-            // settings_map
+            // settings_map_panel
             // 
-            this.settings_map.Controls.Add(this.randomly);
-            this.settings_map.Controls.Add(this.optional);
-            this.settings_map.Controls.Add(this.sea);
-            this.settings_map.Controls.Add(this.plains);
-            this.settings_map.Controls.Add(this.hills);
-            this.settings_map.Controls.Add(this.mountains);
-            this.settings_map.Controls.Add(this.archipelago);
-            this.settings_map.Controls.Add(this.continent);
-            this.settings_map.Controls.Add(this.check_grid);
-            this.settings_map.Controls.Add(this.button2);
-            this.settings_map.Controls.Add(this.UpdateMap);
-            this.settings_map.Location = new System.Drawing.Point(12, 245);
-            this.settings_map.Name = "settings_map";
-            this.settings_map.Size = new System.Drawing.Size(220, 186);
-            this.settings_map.TabIndex = 1;
-            this.settings_map.TabStop = false;
-            this.settings_map.Text = "Настройки карты";
+            this.settings_map_panel.Controls.Add(this.randomly);
+            this.settings_map_panel.Controls.Add(this.optional);
+            this.settings_map_panel.Controls.Add(this.sea);
+            this.settings_map_panel.Controls.Add(this.plains);
+            this.settings_map_panel.Controls.Add(this.hills);
+            this.settings_map_panel.Controls.Add(this.mountains);
+            this.settings_map_panel.Controls.Add(this.archipelago);
+            this.settings_map_panel.Controls.Add(this.continent);
+            this.settings_map_panel.Controls.Add(this.check_grid);
+            this.settings_map_panel.Controls.Add(this.button2);
+            this.settings_map_panel.Controls.Add(this.UpdateMap);
+            this.settings_map_panel.Location = new System.Drawing.Point(12, 245);
+            this.settings_map_panel.Name = "settings_map_panel";
+            this.settings_map_panel.Size = new System.Drawing.Size(220, 186);
+            this.settings_map_panel.TabIndex = 1;
+            this.settings_map_panel.TabStop = false;
+            this.settings_map_panel.Text = "Настройки карты";
             // 
             // randomly
             // 
@@ -212,7 +213,7 @@
             // control_panel
             // 
             this.control_panel.Controls.Add(this.mini_map_title);
-            this.control_panel.Controls.Add(this.settings_map);
+            this.control_panel.Controls.Add(this.settings_map_panel);
             this.control_panel.Dock = System.Windows.Forms.DockStyle.Right;
             this.control_panel.Location = new System.Drawing.Point(640, 0);
             this.control_panel.Name = "control_panel";
@@ -245,7 +246,8 @@
             // 
             // miniMaps_panel
             // 
-            this.miniMaps_panel.Controls.Add(this.normalMap);
+            this.miniMaps_panel.Controls.Add(this.temp_map);
+            this.miniMaps_panel.Controls.Add(this.normal_map);
             this.miniMaps_panel.Dock = System.Windows.Forms.DockStyle.Left;
             this.miniMaps_panel.Location = new System.Drawing.Point(0, 0);
             this.miniMaps_panel.Name = "miniMaps_panel";
@@ -254,12 +256,19 @@
             this.miniMaps_panel.TabStop = false;
             this.miniMaps_panel.Text = "Карты";
             // 
-            // normalMap
+            // normal_map
             // 
-            this.normalMap.Location = new System.Drawing.Point(5, 16);
-            this.normalMap.Name = "normalMap";
-            this.normalMap.Size = new System.Drawing.Size(170, 158);
-            this.normalMap.TabIndex = 0;
+            this.normal_map.Location = new System.Drawing.Point(5, 16);
+            this.normal_map.Name = "normal_map";
+            this.normal_map.Size = new System.Drawing.Size(170, 170);
+            this.normal_map.TabIndex = 0;
+            // 
+            // temp_map
+            // 
+            this.temp_map.Location = new System.Drawing.Point(5, 192);
+            this.temp_map.Name = "temp_map";
+            this.temp_map.Size = new System.Drawing.Size(170, 170);
+            this.temp_map.TabIndex = 1;
             // 
             // Form1
             // 
@@ -279,8 +288,8 @@
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Form1_KeyPress);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyUp);
             this.Resize += new System.EventHandler(this.Form1_Resize);
-            this.settings_map.ResumeLayout(false);
-            this.settings_map.PerformLayout();
+            this.settings_map_panel.ResumeLayout(false);
+            this.settings_map_panel.PerformLayout();
             this.control_panel.ResumeLayout(false);
             this.mini_map_title.ResumeLayout(false);
             this.miniMaps_panel.ResumeLayout(false);
@@ -291,7 +300,7 @@
         #endregion
 
         private System.Windows.Forms.Button UpdateMap;
-        private System.Windows.Forms.GroupBox settings_map;
+        private System.Windows.Forms.GroupBox settings_map_panel;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Timer move;
         private System.Windows.Forms.GroupBox control_panel;
@@ -309,7 +318,8 @@
         private System.Windows.Forms.RadioButton sea;
         private System.Windows.Forms.RadioButton plains;
         private System.Windows.Forms.GroupBox miniMaps_panel;
-        private System.Windows.Forms.Panel normalMap;
+        private System.Windows.Forms.Panel normal_map;
+        private System.Windows.Forms.Panel temp_map;
     }
 }
 

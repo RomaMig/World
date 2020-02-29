@@ -4,16 +4,19 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using World.Environment;
+using World.Environment.Light;
+using World.Utilite;
 
-namespace World
+namespace World.Environment.Elements
 {
-    struct Water : IPaintable, IBrightness, IElement<double>
+    class Water : Element<double>, IBrightness
     {
         public const double seaLevel = -.3;
         private double deep;
         private Color color;
-        public Point Location { get; set; }
-        public double Value
+        private Color baseColor;
+        public new double Value
         {
             get
             {
@@ -21,18 +24,21 @@ namespace World
             }
             set
             {
-                if (value >= -1 && value <= seaLevel)
+                if (deep != value)
                 {
-                    deep = value;
-                    color = BaseColor;
-                    if (changed != null)
-                        changed(this, null);
+                    if (value < -1)
+                        deep = -1;
+                    else
+                    if (value >= seaLevel)
+                        deep = seaLevel - 0.01;
+                    else
+                        deep = value;
+                    baseColor = getColor(deep);
+                    updateBrightness();
                 }
             }
         }
-        public Vector3 Normal { get; set; }
-        public float Brightness { get; set; }
-        public Color Color
+        public new Color Color
         {
             get
             {
@@ -41,47 +47,41 @@ namespace World
             set
             {
                 color = value;
-                if (changed != null)
-                    changed(this, null);
+                Repaint(this);
             }
         }
         public Color BaseColor
         {
             get
             {
-                IElement<double> e = this;
-                return e.getColor(Value);
+                return baseColor;
             }
         }
         public Color ReflectColor { get; set; }
+        public Vector3 Normal { get; set; }
+        public float Brightness { get; set; }
 
-        public event EventHandler changed;
-
-        public Water(int x, int y, double value)
+        public Water(int x, int y, double value) : base(x, y)
         {
-            Location = new Point(x, y);
-            deep = value;
-            color = Color.Red;
-            changed = null;
             Brightness = .5f;
             Normal = new Vector3(0, 0, 1);
             ReflectColor = new Color();
             Value = value;
         }
 
-        public void Paint(Bitmap bitmap)
+        public override void Paint(Bitmap bitmap)
         {
             bitmap.SetPixel(Location.X, Location.Y, color);
         }
 
-        Color IElement<double>.getColor(double value)
+        protected override Color getColor(double value)
         {
             if (value < -.4)
                 return Color.FromArgb(
                     (int)Math.Round(-1f - 5f * value),
                     (int)Math.Round(800f / 3f + 575f / 3f * value),
                     (int)Math.Round(268f + 165f * value));
-            if (-.4 < value && value < Water.seaLevel)
+            if (-.4 < value && value < seaLevel)
                 return Color.FromArgb(
                     (int)Math.Round(857f + 2140f * value),
                     (int)Math.Round(322f + 330f * value),
@@ -91,10 +91,19 @@ namespace World
 
         public void updateBrightness()
         {
-            HSB hsb = HSB.toHSB(BaseColor);
-            hsb.B = (int)(Brightness * 100);
-            Color = Utilites.FilterColor(HSB.fromHSB(hsb), ReflectColor);
+            Color = Utilites.FilterColor(baseColor, ReflectColor);
+
+            //HSB hsb = HSB.toHSB(BaseColor);
+            //hsb.B = (int)(Brightness * 100);
+            //Color = Utilites.FilterColor(HSB.fromHSB(hsb), ReflectColor);
             //color = Color.FromArgb((int)(Brightness * 255), color.R, color.G, color.B);
+        }
+        public void updateBrightness(float R, float G, float B)
+        {
+            Color = Color.FromArgb(
+                (int)(baseColor.R * R / 255f),
+                (int)(baseColor.G * G / 255f),
+                (int)(baseColor.B * B / 255f));
         }
     }
 }

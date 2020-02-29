@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Drawing;
+using World.Utilite;
 
-namespace World
+namespace World.Environment.Map
 {
     class PerlinNoise : MapHeights
     {
