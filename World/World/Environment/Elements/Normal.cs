@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Drawing;
-using World.Cameras;
+using World.CameraSystem;
 using World.Environment;
 using World.Utilite;
 
 namespace World.Environment.Elements
 {
-    class Normal : Element<Vector3>, IPaintable
+    class Normal : Element<Vector3>
     {
         private Vector3 normal;
-        private Color color;
         public new Vector3 Value
         {
             get
@@ -40,11 +39,6 @@ namespace World.Environment.Elements
         public Normal(int x, int y, Vector3 value) : base(x, y)
         {
             Value = value;
-        }
-
-        public override void Paint(Bitmap bitmap)
-        {
-            bitmap.SetPixel(Location.X, Location.Y, color);
         }
 
         protected override Color getColor(Vector3 value)

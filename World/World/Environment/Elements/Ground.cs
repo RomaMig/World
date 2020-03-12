@@ -13,7 +13,6 @@ namespace World.Environment.Elements
     class Ground : Element<double>, IBrightness
     {
         private double height;
-        private Color color;
         private Color baseColor;
         public new double Value
         {
@@ -66,11 +65,6 @@ namespace World.Environment.Elements
             Normal = normal;
             ReflectColor = new Color();
             Value = value;
-        }
-
-        public override void Paint(Bitmap bitmap)
-        {
-            bitmap.SetPixel(Location.X, Location.Y, color);
         }
 
         protected override Color getColor(double value)

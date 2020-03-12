@@ -4,13 +4,15 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using World.Cameras;
+using World.CameraSystem;
 using World.Environment;
 
 namespace World.Utilite
 {
     class  Grid : IPaintable
     {
+        public bool Infreez { get; set; }
+
         public event EventHandler<IPaintable> repaint;
 
         public void Paint(Bitmap bitmap)

@@ -4,16 +4,15 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using World.Cameras;
+using World.CameraSystem;
 using World.Environment;
 using World.Utilite;
 
 namespace World.Environment.Elements
 {
-    class Temperature : Element<int>, IPaintable
+    class Temperature : Element<int>
     {
         private int temp;
-        private Color color;
         public new int Value
         {
             get
@@ -51,11 +50,6 @@ namespace World.Environment.Elements
         public Temperature(int x, int y, int value) : base(x, y)
         {
             Value = value;
-        }
-
-        public override void Paint(Bitmap bitmap)
-        {
-            bitmap.SetPixel(Location.X, Location.Y, color);
         }
 
         protected override Color getColor(int value)

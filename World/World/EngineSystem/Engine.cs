@@ -123,6 +123,33 @@ namespace World.EngineSystem
         {
             postTask.AddRange(c);
         }
+        public void RemovePre(params IChangeable[] c)
+        {
+            for (int i = 0; i < c.Length; i++)
+                preTask.Remove(c[i]);
+        }
+        public void RemoveParallel(params IChangeable[] c)
+        {
+            for (int i = 0; i < c.Length; i++)
+                parallel.Remove(c[i]);
+        }
+        public void RemovePost(params IChangeable[] c)
+        {
+            for (int i = 0; i < c.Length; i++)
+                postTask.Remove(c[i]);
+        }
+        public void ClearPre()
+        {
+            preTask.Clear();
+        }
+        public void ClearParallel()
+        {
+            parallel.Clear();
+        }
+        public void ClearPost()
+        {
+            postTask.Clear();
+        }
         public void Clear()
         {
             preTask.Clear();

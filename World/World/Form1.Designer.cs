@@ -48,8 +48,8 @@
             this.mini_map = new System.Windows.Forms.Panel();
             this.zoom = new System.Windows.Forms.Timer(this.components);
             this.miniMaps_panel = new System.Windows.Forms.GroupBox();
-            this.normal_map = new System.Windows.Forms.Panel();
             this.temp_map = new System.Windows.Forms.Panel();
+            this.normal_map = new System.Windows.Forms.Panel();
             this.settings_map_panel.SuspendLayout();
             this.control_panel.SuspendLayout();
             this.mini_map_title.SuspendLayout();
@@ -256,19 +256,19 @@
             this.miniMaps_panel.TabStop = false;
             this.miniMaps_panel.Text = "Карты";
             // 
-            // normal_map
-            // 
-            this.normal_map.Location = new System.Drawing.Point(5, 16);
-            this.normal_map.Name = "normal_map";
-            this.normal_map.Size = new System.Drawing.Size(170, 170);
-            this.normal_map.TabIndex = 0;
-            // 
             // temp_map
             // 
             this.temp_map.Location = new System.Drawing.Point(5, 192);
             this.temp_map.Name = "temp_map";
             this.temp_map.Size = new System.Drawing.Size(170, 170);
             this.temp_map.TabIndex = 1;
+            // 
+            // normal_map
+            // 
+            this.normal_map.Location = new System.Drawing.Point(5, 16);
+            this.normal_map.Name = "normal_map";
+            this.normal_map.Size = new System.Drawing.Size(170, 170);
+            this.normal_map.TabIndex = 0;
             // 
             // Form1
             // 

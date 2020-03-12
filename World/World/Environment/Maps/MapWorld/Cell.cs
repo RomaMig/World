@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using World.Environment.Elements;
 using World.Environment;
 using World.Environment.Light;
-using World.Cameras;
+using World.CameraSystem;
 
 namespace World.Environment.Map
 {

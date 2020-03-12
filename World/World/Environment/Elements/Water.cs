@@ -14,7 +14,6 @@ namespace World.Environment.Elements
     {
         public const double seaLevel = -.3;
         private double deep;
-        private Color color;
         private Color baseColor;
         public new double Value
         {
@@ -67,11 +66,6 @@ namespace World.Environment.Elements
             Normal = new Vector3(0, 0, 1);
             ReflectColor = new Color();
             Value = value;
-        }
-
-        public override void Paint(Bitmap bitmap)
-        {
-            bitmap.SetPixel(Location.X, Location.Y, color);
         }
 
         protected override Color getColor(double value)

@@ -46,19 +46,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Cameras\Camera.cs" />
-    <Compile Include="Cameras\DinamicCamera.cs" />
+    <Compile Include="EngineSystem\CameraSystem\Camera.cs" />
+    <Compile Include="EngineSystem\CameraSystem\DinamicCamera.cs" />
+    <Compile Include="EngineSystem\CameraSystem\ICamera.cs" />
     <Compile Include="EngineSystem\Engine.cs" />
+    <Compile Include="EngineSystem\OptimizeSystem\IFreezeable.cs" />
+    <Compile Include="EngineSystem\OptimizeSystem\Optimize.cs" />
     <Compile Include="Environment\Elements\Temperature.cs" />
-    <Compile Include="Environment\Light\DinamicLight.cs" />
+    <Compile Include="EngineSystem\LightSystem\DinamicLight.cs" />
     <Compile Include="Environment\Maps\MapShadows\MapShadows.cs" />
-    <Compile Include="Cameras\IPaintable.cs" />
+    <Compile Include="EngineSystem\CameraSystem\IPaintable.cs" />
     <Compile Include="Environment\Elements\Ground.cs" />
     <Compile Include="Environment\Elements\Element.cs" />
     <Compile Include="Environment\Elements\Normal.cs" />
-    <Compile Include="Environment\Light\IBrightness.cs" />
-    <Compile Include="Environment\Light\Lighting.cs" />
-    <Compile Include="Environment\Light\LightSource.cs" />
+    <Compile Include="EngineSystem\LightSystem\IBrightness.cs" />
+    <Compile Include="EngineSystem\LightSystem\Lighting.cs" />
+    <Compile Include="EngineSystem\LightSystem\LightSource.cs" />
     <Compile Include="Environment\Maps\MapHeights\DiamondSquare.cs" />
     <Compile Include="Entity\Entity.cs" />
     <Compile Include="Environment\Maps\MapHeights\Union.cs" />
@@ -74,9 +77,9 @@
     <Compile Include="Environment\Maps\MapHeights\MapHeights.cs" />
     <Compile Include="Environment\Maps\MapHeights\PerlinNoise.cs" />
     <Compile Include="Environment\Maps\Maps.cs" />
-    <Compile Include="Interfaces\IChangeable.cs" />
-    <Compile Include="Interfaces\ITask.cs" />
-    <Compile Include="Interfaces\IWork.cs" />
+    <Compile Include="EngineSystem\Interfaces\IChangeable.cs" />
+    <Compile Include="EngineSystem\Interfaces\ITask.cs" />
+    <Compile Include="EngineSystem\Interfaces\IWork.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Environment\Maps\MapHeights\Voronoi.cs" />

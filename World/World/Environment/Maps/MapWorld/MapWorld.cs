@@ -10,9 +10,10 @@ using System.Diagnostics;
 using World.Environment.Elements;
 using World.Environment.Light;
 using World.Utilite;
-using World.Cameras;
+using World.CameraSystem;
 using World.Interfaces;
 using World.EngineSystem;
+using World.EngineSystem.OptimizeSystem;
 
 namespace World.Environment.Map
 {
@@ -57,7 +58,7 @@ namespace World.Environment.Map
         {
             Light.Clear();
             DinamicLight dl = new DinamicLight(
-                new Point3(200, 200, 1000),
+                new Point3(200, 200, 100),
                 new Vector3(1, 1, -8).normalize(),
                 Color.FromArgb(255, 245, 195),
                 .8f,
@@ -66,9 +67,9 @@ namespace World.Environment.Map
                 () =>
                 {
                     Vector3 tmp = dl.Direction;
-                    tmp.Rotate((float)(Math.PI / 720f), (float)(Math.PI / 360f), 0);
+                    tmp.RotateByY((float)(Math.PI / 720f));
                     dl.Direction = tmp.normalize();
-                }, 150);/*
+                }, 100);/*
             dl.AddBehavior(
                 () =>
                 {
@@ -117,7 +118,7 @@ namespace World.Environment.Map
                                     break;
                             }
                             if (Map[i, j][k, s].Height is IBrightness)
-                                light.AddItems((IBrightness)Map[i, j][k, s].Height);
+                                light.Add((IBrightness)Map[i, j][k, s].Height);
                         }
                     }
                 }
